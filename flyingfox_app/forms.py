@@ -1,7 +1,7 @@
 
 
 from django import forms
-from .models import Testimonial
+from .models import Offer, Testimonial
 
 
 class TestimonialForm(forms.ModelForm):
@@ -9,12 +9,72 @@ class TestimonialForm(forms.ModelForm):
         model = Testimonial
         fields = ["name", "image", "review"]
 
-from django import forms
-from .models import Offer
 
 
+
 from django import forms
-from .models import Offer
+
+from .models import ContactEnquiry
+
+
+class ContactEnquiryForm(forms.ModelForm):
+
+    class Meta:
+
+        model = ContactEnquiry
+
+        fields = [
+            "name",
+            "email",
+            "subject",
+            "message",
+        ]
+
+
+    def clean_name(self):
+
+        name = self.cleaned_data.get(
+            "name",
+            ""
+        ).strip()
+
+        if len(name) < 2:
+            raise forms.ValidationError(
+                "Please enter a valid name."
+            )
+
+        return name
+
+
+    def clean_subject(self):
+
+        subject = self.cleaned_data.get(
+            "subject",
+            ""
+        ).strip()
+
+        if len(subject) < 3:
+            raise forms.ValidationError(
+                "Please enter a valid subject."
+            )
+
+        return subject
+
+
+    def clean_message(self):
+
+        message = self.cleaned_data.get(
+            "message",
+            ""
+        ).strip()
+
+        if len(message) < 10:
+            raise forms.ValidationError(
+                "Please enter a little more information."
+            )
+
+        return message
+
 
 
 class OfferForm(forms.ModelForm):
@@ -72,3 +132,4 @@ class OfferForm(forms.ModelForm):
             )
 
         return cleaned_data
+    

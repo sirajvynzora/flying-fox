@@ -5,175 +5,748 @@
 {{ ride.name }} | Flying Fox Adventure
 {% endblock %}
 
+
 {% block content %}
 
-<!-- Ride image-only hero slider -->
-<section class="ride-image-hero">
 
-    {% if ride_images %}
+<!-- =====================================================
+     RIDE HERO IMAGE SLIDER
+     KEEPING YOUR CURRENT HERO EXACTLY
+===================================================== -->
 
-        <div class="ride-image-slider owl-carousel owl-theme">
+{% if ride_images %}
 
-            {% for media in ride_images %}
+    <div class="ride-image-slider owl-carousel owl-theme">
 
-                <div class="ride-image-slide">
-                    <img
-                        src="{{ media.image.url }}"
-                        alt="{{ ride.name }}"
-                    >
-                </div>
+        {% for media in ride_images %}
 
-            {% endfor %}
+            <div class="ride-image-slide">
 
-        </div>
+                <img
+                    src="{{ media.image.url }}"
+                    alt="{{ ride.name }}"
+                >
 
-    {% else %}
-
-        <div class="ride-image-slide">
-            <img
-                src="{% static 'frontend/assets/img/breadcrumb/01.webp' %}"
-                alt="{{ ride.name }}"
-            >
-        </div>
-
-    {% endif %}
-
-</section>
-<!-- Ride image-only hero slider end -->
-
-
-<!-- Keep your previous body section below this -->
-
-<div class="destination-single py-120">
-    <div class="container">
-        <div class="row g-4 g-lg-5">
-
-            <div class="col-lg-4">
-                <div class="sidebar">
-
-                    <div class="destination-info">
-                        <h4>Ride Information</h4>
-
-                        <ul>
-                            <li>
-                                <span class="list-title">
-                                    <i class="fal fa-clock"></i>
-                                    Duration
-                                </span>
-
-                                <span class="list-value">
-                                    {{ ride.duration }}
-                                </span>
-                            </li>
-
-                            <li>
-                                <span class="list-title">
-                                    <i class="fal fa-shield-check"></i>
-                                    Status
-                                </span>
-
-                                <span class="list-value">
-                                    {% if ride.is_active %}
-                                        Available
-                                    {% else %}
-                                        Unavailable
-                                    {% endif %}
-                                </span>
-                            </li>
-
-                            {% if current_price %}
-                                <li>
-                                    <span class="list-title">
-                                        <i class="fal fa-indian-rupee-sign"></i>
-                                        Price
-                                    </span>
-
-                                    <span class="list-value">
-                                        ₹{{ current_price.price }}
-                                    </span>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-
-                    <div class="destination-banner mt-5">
-                        <div class="img">
-                            <a href="{% url 'bookings' %}">
-                                <img
-                                    src="{% static 'frontend/assets/img/banner/b1.webp' %}"
-                                    alt="Book {{ ride.name }}"
-                                >
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
             </div>
 
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="ride-image-slide">
+
+        <img
+            src="{% static 'frontend/assets/img/breadcrumb/01.webp' %}"
+            alt="{{ ride.name }}"
+        >
+
+    </div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     RIDE DETAILS
+===================================================== -->
+
+<div class="tour-single py-120">
+
+    <div class="container">
+
+        <div class="row g-4 g-lg-5">
+
+
+            <!-- =================================================
+                 LEFT CONTENT
+            ================================================== -->
 
             <div class="col-lg-8">
 
-                <div class="destination-details">
+                <div class="tour-single-wrap">
 
-                    <h1 class="mb-10">
-                        {{ ride.name }}
-                    </h1>
 
-                    <div class="mb-20">
-                        {{ ride.description|linebreaks }}
+                    <!-- =========================================
+                         RIDE TITLE
+                    ========================================== -->
+
+                    <div class="tour-single-top">
+
+                        <div class="top-info">
+
+                            <h1 class="title">
+                                {{ ride.name }}
+                            </h1>
+
+                            <p class="location">
+
+                                <i class="far fa-location-dot"></i>
+
+                                Munnar, Kerala
+
+                            </p>
+
+                        </div>
+
+
+                        {% if ride.is_featured %}
+
+                            <div class="top-rate">
+
+                                <span class="badge">
+
+                                    <i class="far fa-star"></i>
+
+                                    Featured
+
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
                     </div>
 
-                    {% if ride.safety_notes %}
 
-                        <div class="mt-30">
-                            <h4 class="mb-15">
-                                Safety Information
+                    <!-- =========================================
+                         QUICK INFORMATION
+                    ========================================== -->
+
+                    <div class="tour-single-info">
+
+                        <div class="row g-4">
+
+
+                            <!-- Duration -->
+
+                            <div class="col-md-6 col-lg-4">
+
+                                <div class="feature">
+
+                                    <div class="icon">
+
+                                        <i class="far fa-clock"></i>
+
+                                    </div>
+
+                                    <div class="content">
+
+                                        <h6>
+                                            Duration
+                                        </h6>
+
+                                        <span>
+                                            {{ ride.duration }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Availability -->
+
+                            <div class="col-md-6 col-lg-4">
+
+                                <div class="feature">
+
+                                    <div class="icon">
+
+                                        <i class="far fa-shield-check"></i>
+
+                                    </div>
+
+                                    <div class="content">
+
+                                        <h6>
+                                            Availability
+                                        </h6>
+
+                                        <span>
+
+                                            {% if ride.is_active %}
+
+                                                Available
+
+                                            {% else %}
+
+                                                Unavailable
+
+                                            {% endif %}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Price -->
+
+                            <div class="col-md-6 col-lg-4">
+
+                                <div class="feature">
+
+                                    <div class="icon">
+
+                                        <i class="far fa-indian-rupee-sign"></i>
+
+                                    </div>
+
+                                    <div class="content">
+
+                                        <h6>
+                                            Ride Price
+                                        </h6>
+
+                                        <span>
+
+                                            {% if current_price %}
+
+                                                ₹{{ current_price.price|floatformat:0 }}
+
+                                            {% else %}
+
+                                                Contact Us
+
+                                            {% endif %}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         DESCRIPTION
+                    ========================================== -->
+
+                    <div class="tour-details">
+
+                        <h4 class="mb-3">
+                            About This Ride
+                        </h4>
+
+                        <div class="ride-description">
+
+                            {{ ride.description|safe }}
+
+                        </div>
+
+
+                        <!-- =====================================
+                             SAFETY INFORMATION
+                        ====================================== -->
+
+                        {% if ride.safety_notes %}
+
+                            <div class="tour-highlight">
+
+                                <h5>
+                                    Safety Information
+                                </h5>
+
+                                <div class="ride-safety-content">
+
+                                    {{ ride.safety_notes|safe }}
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- =====================================
+                             RIDE HIGHLIGHTS
+                        ====================================== -->
+
+                        <div class="tour-highlight">
+
+                            <h5>
+                                Ride Highlights
+                            </h5>
+
+
+                            <div class="row">
+
+                                <div class="col-lg-6">
+
+                                    <ul class="list">
+
+                                        <li>
+                                            Professional safety equipment
+                                        </li>
+
+                                        <li>
+                                            Experienced adventure guides
+                                        </li>
+
+                                        <li>
+                                            Spectacular mountain views
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+
+
+                                <div class="col-lg-6">
+
+                                    <ul class="list">
+
+                                        <li>
+                                            Suitable for adventure lovers
+                                        </li>
+
+                                        <li>
+                                            Scenic Munnar experience
+                                        </li>
+
+                                        <li>
+                                            Secure booking process
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =====================================
+                             INCLUDED / IMPORTANT INFO
+                        ====================================== -->
+
+                        <div class="row">
+
+
+                            <div class="col-lg-6">
+
+                                <div class="list-included">
+
+                                    <h5>
+                                        Included
+                                    </h5>
+
+                                    <ul class="list">
+
+                                        <li>
+                                            Safety helmet
+                                        </li>
+
+                                        <li>
+                                            Full body harness
+                                        </li>
+
+                                        <li>
+                                            Professional guide
+                                        </li>
+
+                                        <li>
+                                            Safety briefing
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-lg-6">
+
+                                <div class="list-notincluded">
+
+                                    <h5>
+                                        Before You Ride
+                                    </h5>
+
+                                    <ul class="list">
+
+                                        <li>
+                                            Wear comfortable clothing
+                                        </li>
+
+                                        <li>
+                                            Wear secure footwear
+                                        </li>
+
+                                        <li>
+                                            Follow instructor guidance
+                                        </li>
+
+                                        <li>
+                                            Arrive before your time slot
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         RIDE VIDEOS
+                    ========================================== -->
+
+                    {% if ride_videos %}
+
+                        <div class="ride-detail-video-section mt-5">
+
+                            <h4 class="mb-4">
+                                Ride Videos
                             </h4>
 
-                            <div>
-                                {{ ride.safety_notes|linebreaks }}
+
+                            <div class="row g-4">
+
+                                {% for media in ride_videos %}
+
+                                    <div class="col-md-6">
+
+                                        <div class="ride-detail-video">
+
+                                            <video
+                                                controls
+                                                playsinline
+                                                preload="metadata"
+                                            >
+
+                                                <source
+                                                    src="{{ media.video.url }}"
+                                                    type="video/mp4"
+                                                >
+
+                                                Your browser does not support video.
+
+                                            </video>
+
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
                             </div>
+
                         </div>
 
                     {% endif %}
 
+
                 </div>
 
             </div>
 
+
+
+            <!-- =================================================
+                 RIGHT SIDEBAR
+            ================================================== -->
+
+            <div class="col-lg-4">
+
+                <div class="sidebar">
+
+
+                    <!-- =========================================
+                         PRICE
+                    ========================================== -->
+
+                    <div class="price">
+
+
+                        {% if ride.is_featured %}
+
+                            <h4 class="price-tag">
+                                Featured Ride
+                            </h4>
+
+                        {% else %}
+
+                            <h4 class="price-tag">
+                                Flying Fox Adventure
+                            </h4>
+
+                        {% endif %}
+
+
+                        <div class="price-amount">
+
+                            {% if current_price %}
+
+                                From
+
+                                <span>
+                                    ₹{{ current_price.price|floatformat:0 }}
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    Contact For Price
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         RIDE INFORMATION
+                    ========================================== -->
+
+                    <div class="destination-info mt-4">
+
+                        <h4>
+                            Ride Information
+                        </h4>
+
+
+                        <ul>
+
+
+                            <li>
+
+                                <span class="list-title">
+
+                                    <i class="fal fa-clock"></i>
+
+                                    Duration
+
+                                </span>
+
+                                <span class="list-value">
+
+                                    {{ ride.duration }}
+
+                                </span>
+
+                            </li>
+
+
+                            <li>
+
+                                <span class="list-title">
+
+                                    <i class="fal fa-location-dot"></i>
+
+                                    Location
+
+                                </span>
+
+                                <span class="list-value">
+
+                                    Munnar, Kerala
+
+                                </span>
+
+                            </li>
+
+
+                            <li>
+
+                                <span class="list-title">
+
+                                    <i class="fal fa-shield-check"></i>
+
+                                    Status
+
+                                </span>
+
+                                <span class="list-value">
+
+                                    {% if ride.is_active %}
+
+                                        Available
+
+                                    {% else %}
+
+                                        Unavailable
+
+                                    {% endif %}
+
+                                </span>
+
+                            </li>
+
+
+                            {% if current_price %}
+
+                                <li>
+
+                                    <span class="list-title">
+
+                                        <i class="fal fa-indian-rupee-sign"></i>
+
+                                        Price
+
+                                    </span>
+
+                                    <span class="list-value">
+
+                                        ₹{{ current_price.price|floatformat:0 }}
+
+                                    </span>
+
+                                </li>
+
+                            {% endif %}
+
+
+                        </ul>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         BOOK BUTTON
+                    ========================================== -->
+
+                    {% if ride.is_active %}
+
+                        <div class="ride-booking-action mt-4">
+
+                            <a
+                                href="{% url 'bookings' %}"
+                                class="theme-btn w-100 justify-content-center"
+                            >
+
+                                Book This Ride
+
+                                <i class="fas fa-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- =========================================
+                         HELP
+                    ========================================== -->
+
+                    <div class="help mt-4">
+
+                        <p>
+
+                            Need help booking?
+
+                            <a href="{% url 'contact' %}">
+                                Contact Us
+                            </a>
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         BANNER
+                    ========================================== -->
+
+                    <div class="destination-banner mt-4">
+
+                        <div class="img">
+
+                            <a href="{% url 'bookings' %}">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/banner/b1.webp' %}"
+                                    alt="Book {{ ride.name }}"
+                                >
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
         </div>
+
     </div>
+
 </div>
+
+<!-- ride details end -->
+
 
 {% endblock %}
 
+
+
 {% block extra_js %}
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const $rideImageSlider = $(".ride-image-slider");
 
-    if (!$rideImageSlider.length) {
-        return;
-    }
+    $(document).ready(function () {
 
-    const slideCount = $rideImageSlider.find(".ride-image-slide").length;
+        const rideSlider = $(".ride-image-slider");
 
-    $rideImageSlider.owlCarousel({
-        items: 1,
-        loop: slideCount > 1,
-        margin: 0,
-        nav: slideCount > 1,
-        dots: slideCount > 1,
-        autoplay: slideCount > 1,
-        autoplayTimeout: 5000,
-        autoplayHoverPause: true,
-        smartSpeed: 1000,
-        animateOut: "fadeOut",
-        navText: [
-            '<i class="fas fa-arrow-left"></i>',
-            '<i class="fas fa-arrow-right"></i>'
-        ]
+        if (
+            rideSlider.length &&
+            !rideSlider.hasClass("owl-loaded")
+        ) {
+
+            rideSlider.owlCarousel({
+
+                items: 1,
+
+                loop:
+                    rideSlider.children().length > 1,
+
+                margin: 0,
+
+                nav: true,
+
+                dots: true,
+
+                autoplay: false,
+
+                smartSpeed: 700,
+
+                navText: [
+                    '<i class="far fa-arrow-left"></i>',
+                    '<i class="far fa-arrow-right"></i>'
+                ]
+
+            });
+
+        }
+
     });
-});
+
 </script>
+
 {% endblock %}

@@ -1279,6 +1279,58 @@ class ChatEnquiry(models.Model):
     def __str__(self):
         return f"{self.name} - {self.phone}"
 
+
+
+
+
+
+class ContactEnquiry(models.Model):
+
+    name = models.CharField(
+        max_length=150
+    )
+
+    email = models.EmailField()
+
+    subject = models.CharField(
+        max_length=250
+    )
+
+    message = models.TextField()
+
+    is_read = models.BooleanField(
+        default=False
+    )
+
+    email_sent = models.BooleanField(
+        default=False
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+
+    class Meta:
+        ordering = [
+            "-created_at"
+        ]
+
+        verbose_name = "Contact Enquiry"
+        verbose_name_plural = "Contact Enquiries"
+
+
+    def __str__(self):
+        return f"{self.name} - {self.subject}"
+
+
+
+
+
 class Offer(models.Model):
 
     STATUS_CHOICES = [
@@ -1372,12 +1424,21 @@ class Offer(models.Model):
                 return code
 
     def refresh_status(self):
-        today = timezone.now().date()
+        today = timezone.localdate()
 
-        if self.is_active and self.start_date <= today <= self.end_date:
+        if not self.is_active:
+           self.status = "expired"
+
+        elif today < self.start_date:
+           self.status = "upcoming"
+
+        elif self.start_date <= today <= self.end_date:
             self.status = "active"
+
         else:
             self.status = "expired"
+
+        return self.status
 
     def save(self, *args, **kwargs):
 

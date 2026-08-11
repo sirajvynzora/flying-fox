@@ -1,5 +1,6 @@
 import json
 import re
+import secrets
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -13,7 +14,7 @@ from django.db import transaction
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Prefetch
-from datetime import date
+from datetime import date, time
 from django.utils.dateparse import parse_date
 from datetime import date
 from decimal import Decimal, InvalidOperation
@@ -21,6 +22,8 @@ from io import BytesIO
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+
+from datetime import datetime, time
 
 import re
 
@@ -60,17 +63,19 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.dateparse import parse_date
 
 
-from flyingfox_app.forms import TestimonialForm
+from flyingfox_app.forms import ContactEnquiryForm, TestimonialForm
 
 from .models import (
     ChatEnquiry,
     ChatbotRule,
     ChatMessage,
     ChatSession,
+    ContactEnquiry,
     GalleryCategory,
     GalleryItem,
     Blog,
     ContactMessage,
+    Offer,
     UserProfile,
     RideMedia,
     Ride, RidePrice, Booking,
@@ -966,6 +971,93 @@ def delete_contact(request, pk):
         contact.delete()
         messages.success(request, "Contact deleted!")
     return redirect("view_contacts")
+
+
+
+def contact_enquiry_list(request):
+
+    enquiries = ContactEnquiry.objects.all().order_by("-created_at")
+
+    # Search
+    search = request.GET.get("search", "").strip()
+
+    if search:
+        enquiries = enquiries.filter(
+            Q(name__icontains=search)
+        ) | enquiries.filter(
+            Q(email__icontains=search)
+        ) | enquiries.filter(
+            Q(subject__icontains=search)
+        )
+
+    # Pagination
+    paginator = Paginator(enquiries, 10)
+
+    page_number = request.GET.get("page")
+
+    contacts = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "admin_pages/contact_enquiry_list.html",
+        {
+            "contacts": contacts,
+            "search": search,
+        }
+    )
+
+
+
+
+def contact_enquiry_detail(request, pk):
+
+    contact = get_object_or_404(
+        ContactEnquiry,
+        pk=pk
+    )
+
+    # Mark enquiry as read
+    if not contact.is_read:
+        contact.is_read = True
+        contact.save(
+            update_fields=["is_read"]
+        )
+
+    return render(
+        request,
+        "admin_pages/contact_enquiry_detail.html",
+        {
+            "contact": contact
+        }
+    )
+
+
+
+
+def contact_enquiry_delete(request, pk):
+
+    contact = get_object_or_404(
+        ContactEnquiry,
+        pk=pk
+    )
+
+    if request.method == "POST":
+
+        contact.delete()
+
+        messages.success(
+            request,
+            "Contact enquiry deleted successfully."
+        )
+
+    return redirect(
+        "contact_enquiry_list"
+    )
+
+
+
+
+
 
 
 # ==========================================
@@ -3340,88 +3432,425 @@ def user_signup(request):
 
 
 
-
 def user_signin(request):
 
     if request.session.get("user_id"):
-        return redirect("/bookings/")
+        return redirect("home")
 
 
     if request.method == "POST":
 
-        email = request.POST.get(
-            "email",
+        phone = request.POST.get(
+            "phone",
             ""
-        ).strip().lower()
+        ).strip()
 
-        password = request.POST.get(
-            "password",
+        phone = phone.replace(
+            " ",
             ""
         )
 
 
-        try:
+        # ==========================================
+        # VALIDATE PHONE
+        # ==========================================
 
-            user = UserProfile.objects.get(
-                email__iexact=email
-            )
-
-        except UserProfile.DoesNotExist:
+        if not phone:
 
             messages.error(
                 request,
-                "Invalid email or password."
+                "Please enter your mobile number."
             )
 
             return render(
                 request,
-                "authenticate/signin.html",
-                {
-                    "email": email
-                }
+                "authenticate/signin.html"
             )
 
 
-        if not check_password(
-            password,
-            user.password
+        if (
+            not phone.isdigit()
+            or len(phone) != 10
         ):
 
             messages.error(
                 request,
-                "Invalid email or password."
+                "Please enter a valid 10-digit mobile number."
             )
 
             return render(
                 request,
                 "authenticate/signin.html",
                 {
-                    "email": email
+                    "phone": phone
                 }
             )
 
 
-        request.session[
-            "user_id"
-        ] = user.id
+        # ==========================================
+        # GENERATE OTP
+        # ==========================================
 
-        request.session[
-            "user_name"
-        ] = user.full_name
-
-
-        messages.success(
-            request,
-            f"Welcome back, {user.full_name}!"
+        otp = str(
+            secrets.randbelow(
+                900000
+            ) + 100000
         )
 
 
-        return redirect("home")
+        # ==========================================
+        # SAVE IN SESSION
+        # ==========================================
+
+        request.session[
+            "login_phone"
+        ] = phone
+
+        request.session[
+            "login_otp"
+        ] = otp
+
+        request.session[
+            "login_otp_created_at"
+        ] = int(
+            timezone.now().timestamp()
+        )
+
+        request.session[
+            "login_otp_verified"
+        ] = False
+
+
+        # ==========================================
+        # LOCAL TESTING OTP
+        # ==========================================
+
+        print(
+            "===================================="
+        )
+
+        print(
+            f"LOGIN OTP FOR {phone}: {otp}"
+        )
+
+        print(
+            "===================================="
+        )
+
+
+        return redirect(
+            "verify_login_otp"
+        )
 
 
     return render(
         request,
         "authenticate/signin.html"
+    )
+
+
+
+
+def verify_login_otp(request):
+
+    # ==========================================
+    # GET PHONE FROM SESSION
+    # ==========================================
+
+    phone = request.session.get(
+        "login_phone"
+    )
+
+
+    # User came here without requesting OTP
+    if not phone:
+
+        messages.error(
+            request,
+            "Please enter your mobile number first."
+        )
+
+        return redirect(
+            "user_signin"
+        )
+
+
+    if request.method == "POST":
+
+        # ==========================================
+        # GET 6 OTP BOXES
+        # ==========================================
+
+        otp_1 = request.POST.get(
+            "otp_1",
+            ""
+        )
+
+        otp_2 = request.POST.get(
+            "otp_2",
+            ""
+        )
+
+        otp_3 = request.POST.get(
+            "otp_3",
+            ""
+        )
+
+        otp_4 = request.POST.get(
+            "otp_4",
+            ""
+        )
+
+        otp_5 = request.POST.get(
+            "otp_5",
+            ""
+        )
+
+        otp_6 = request.POST.get(
+            "otp_6",
+            ""
+        )
+
+
+        entered_otp = (
+            otp_1
+            + otp_2
+            + otp_3
+            + otp_4
+            + otp_5
+            + otp_6
+        )
+
+
+        stored_otp = request.session.get(
+            "login_otp"
+        )
+
+
+        otp_created_at = request.session.get(
+            "login_otp_created_at"
+        )
+
+
+        # ==========================================
+        # CHECK OTP EXISTS
+        # ==========================================
+
+        if not stored_otp:
+
+            messages.error(
+                request,
+                "OTP session expired. Please request a new OTP."
+            )
+
+            return redirect(
+                "user_signin"
+            )
+
+
+        # ==========================================
+        # CHECK EXPIRY
+        # 5 MINUTES = 300 SECONDS
+        # ==========================================
+
+        if (
+    not otp_created_at
+    or
+    int(timezone.now().timestamp())
+    - int(otp_created_at)
+    > 300
+      ):
+
+          request.session.pop(
+        "login_otp",
+        None
+    )
+
+          request.session.pop(
+        "login_otp_created_at",
+        None
+    )
+
+          messages.error(
+        request,
+        "OTP expired. Please request a new OTP."
+    )
+
+          return redirect(
+        "user_signin"
+    )
+
+
+        # ==========================================
+        # VALIDATE OTP
+        # ==========================================
+
+        if entered_otp != stored_otp:
+
+            messages.error(
+                request,
+                "Invalid OTP. Please try again."
+            )
+
+            return render(
+                request,
+                "authenticate/verify_otp.html",
+                {
+                    "phone": phone
+                }
+            )
+
+
+        # ==========================================
+        # OTP SUCCESS
+        # ==========================================
+
+        request.session[
+            "login_otp_verified"
+        ] = True
+
+
+        # ==========================================
+        # FIND / CREATE USER
+        # ==========================================
+
+        try:
+
+            user = UserProfile.objects.get(
+                phone=phone
+            )
+
+        except UserProfile.DoesNotExist:
+
+            user = UserProfile.objects.create(
+                phone=phone
+            )
+
+
+        # ==========================================
+        # LOGIN USER USING YOUR SESSION SYSTEM
+        # ==========================================
+
+        request.session[
+            "user_id"
+        ] = user.id
+
+
+        request.session[
+            "user_name"
+        ] = (
+            getattr(
+                user,
+                "full_name",
+                ""
+            )
+            or "Flying Fox User"
+        )
+
+
+        # ==========================================
+        # REMOVE OTP SESSION
+        # ==========================================
+
+        request.session.pop(
+            "login_otp",
+            None
+        )
+
+        request.session.pop(
+            "login_otp_created_at",
+            None
+        )
+
+
+        messages.success(
+            request,
+            "Mobile number verified successfully."
+        )
+
+
+        return redirect(
+            "home"
+        )
+
+
+    return render(
+        request,
+        "authenticate/verify_otp.html",
+        {
+            "phone": phone
+        }
+    )
+
+
+
+def resend_login_otp(request):
+
+    phone = request.session.get(
+        "login_phone"
+    )
+
+
+    if not phone:
+
+        messages.error(
+            request,
+            "Please enter your mobile number first."
+        )
+
+        return redirect(
+            "user_signin"
+        )
+
+
+    otp = str(
+        secrets.randbelow(
+            900000
+        ) + 100000
+    )
+
+
+    request.session[
+        "login_otp"
+    ] = otp
+
+
+    request.session[
+        "login_otp_created_at"
+    ] = int(
+        time.time()
+    )
+
+
+    # ==========================================
+    # LOCAL TESTING
+    # ==========================================
+
+    print(
+        "===================================="
+    )
+
+    print(
+        f"RESENT OTP FOR {phone}: {otp}"
+    )
+
+    print(
+        "===================================="
+    )
+
+
+    # Later:
+    # send_otp_sms(phone, otp)
+
+
+    messages.success(
+        request,
+        "A new OTP has been sent."
+    )
+
+
+    return redirect(
+        "verify_login_otp"
     )
 
 
@@ -3440,32 +3869,70 @@ def user_logout(request):
     )
 
 
-
-
-
-
-
- # ---------------------------
-        # Home 
- # ---------------------------
-
 def home(request):
 
-    # Get every RideMedia record that actually has a video file.
-    # We are not checking media_type here.
+    today = timezone.localdate()
+
+    # -----------------------------------------
+    # RIDE VIDEOS
+    # -----------------------------------------
+
     video_media = (
         RideMedia.objects
+        .filter(
+            media_type="video",
+            video__isnull=False,
+        )
         .exclude(video="")
-        .filter(video__isnull=False)
         .order_by("-created_at")
     )
 
-    gallery_videos = (
-       GalleryItem.objects
-       .filter(video__isnull=False)
-       .exclude(video="")
-       .order_by("-uploaded_at")[:10]
+
+    # -----------------------------------------
+    # RIDE IMAGES
+    # -----------------------------------------
+
+    image_media = (
+        RideMedia.objects
+        .filter(
+            media_type="image",
+            image__isnull=False,
+        )
+        .exclude(image="")
+        .order_by("-created_at")
     )
+
+
+    # -----------------------------------------
+    # CURRENT RIDE PRICES
+    # -----------------------------------------
+
+    current_prices = (
+        RidePrice.objects
+        .filter(
+            is_active=True,
+            start_date__lte=today,
+            end_date__gte=today,
+        )
+        .order_by("price")
+    )
+
+
+    # -----------------------------------------
+    # GALLERY VIDEOS
+    # -----------------------------------------
+
+    gallery_videos = (
+        GalleryItem.objects
+        .filter(video__isnull=False)
+        .exclude(video="")
+        .order_by("-uploaded_at")[:10]
+    )
+
+
+    # -----------------------------------------
+    # GALLERY IMAGES
+    # -----------------------------------------
 
     gallery_images = (
         GalleryItem.objects
@@ -3475,37 +3942,124 @@ def home(request):
         .order_by("-uploaded_at")[:8]
     )
 
+
+    # -----------------------------------------
+    # ALL ACTIVE RIDES
+    # -----------------------------------------
+
     rides = (
         Ride.objects
         .filter(is_active=True)
         .prefetch_related(
+
+            # Videos
             Prefetch(
                 "media",
                 queryset=video_media,
                 to_attr="uploaded_videos",
-            )
+            ),
+
+            # Images
+            Prefetch(
+                "media",
+                queryset=image_media,
+                to_attr="uploaded_images",
+            ),
+
+            # Current Prices
+            Prefetch(
+                "prices",
+                queryset=current_prices,
+                to_attr="current_prices",
+            ),
+
         )
+        .order_by("-created_at")
     )
+
+
+    # -----------------------------------------
+    # FEATURED RIDES
+    # -----------------------------------------
+
+    featured_rides = (
+        Ride.objects
+        .filter(
+            is_active=True,
+            is_featured=True,
+        )
+        .prefetch_related(
+
+            Prefetch(
+                "media",
+                queryset=image_media,
+                to_attr="featured_images",
+            ),
+
+            Prefetch(
+                "prices",
+                queryset=current_prices,
+                to_attr="featured_prices",
+            ),
+
+        )
+        .order_by("-created_at")
+    )
+
+
+    # -----------------------------------------
+    # TESTIMONIALS
+    # -----------------------------------------
+
     testimonials = (
         Testimonial.objects
         .all()
         .order_by("-created_at")
     )
 
-    blogs = Blog.objects.all().order_by("-created_at")[:3]
+
+    # -----------------------------------------
+    # BLOGS
+    # -----------------------------------------
+
+    blogs = (
+        Blog.objects
+        .all()
+        .order_by("-created_at")[:3]
+    )
+
+    today = timezone.now().date()
+
+    active_offers = (
+    Offer.objects
+    .filter(
+        is_active=True,
+        start_date__lte=today,
+        end_date__gte=today,
+    )
+    .exclude(
+        banner_image=""
+    )
+    .filter(
+        banner_image__isnull=False
+    )
+    .order_by("-created_at")
+    )
+
 
     return render(
         request,
         "frontend/index.html",
         {
             "rides": rides,
+            "featured_rides": featured_rides,
             "gallery_videos": gallery_videos,
             "gallery_images": gallery_images,
             "testimonials": testimonials,
             "blogs": blogs,
+            "active_offers": active_offers,
         },
     )
-
 
 
 
@@ -6067,7 +6621,15 @@ def about(request):
         .order_by("-created_at")[:10]
     )
 
-    return render(request, "frontend/about.html", {"testimonials": testimonials})
+    mission_gallery_images = (
+        GalleryItem.objects
+        .filter(image__isnull=False)
+        .exclude(image="")
+        .select_related("category")
+        .order_by("-uploaded_at")[:10]
+    )
+
+    return render(request, "frontend/about.html", {"testimonials": testimonials,   "mission_gallery_images": mission_gallery_images,})
 
 
 def activity(request):
@@ -6107,8 +6669,195 @@ def blog_single(request):
     return render(request, "frontend/blog-single.html")
 
 
+from django.conf import settings
+from django.contrib import messages
+from django.core.mail import EmailMessage
+from django.shortcuts import render, redirect
+
+from .forms import ContactEnquiryForm
+
+
 def contact(request):
-    return render(request, "frontend/contact.html")
+
+    if request.method == "POST":
+
+        form = ContactEnquiryForm(
+            request.POST
+        )
+
+        if form.is_valid():
+
+            # ==================================
+            # SAVE TO DATABASE FIRST
+            # ==================================
+
+            enquiry = form.save(
+                commit=False
+            )
+
+            enquiry.email_sent = False
+
+            enquiry.save()
+
+
+            try:
+
+                # ==================================
+                # EMAIL 1:
+                # SEND ENQUIRY TO FLYING FOX
+                # ==================================
+
+                admin_email = EmailMessage(
+
+                    subject=(
+                        f"Flying Fox Enquiry: "
+                        f"{enquiry.subject}"
+                    ),
+
+                    body=f"""
+New Contact Enquiry
+
+Name:
+{enquiry.name}
+
+Email:
+{enquiry.email}
+
+Subject:
+{enquiry.subject}
+
+Message:
+{enquiry.message}
+
+Enquiry ID:
+#{enquiry.id}
+""",
+
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+
+                    to=[
+                        settings.CONTACT_RECEIVER_EMAIL
+                    ],
+
+                    # Clicking Reply in Gmail
+                    # replies directly to customer
+                    reply_to=[
+                        enquiry.email
+                    ],
+
+                )
+
+
+                admin_email.send(
+                    fail_silently=False
+                )
+
+
+                # ==================================
+                # EMAIL 2:
+                # CONFIRMATION TO CUSTOMER
+                # ==================================
+
+                customer_email = EmailMessage(
+
+                    subject=(
+                        "We received your Flying Fox enquiry"
+                    ),
+
+                    body=f"""
+Hi {enquiry.name},
+
+Thank you for contacting Flying Fox Adventure.
+
+We have received your enquiry regarding:
+
+{enquiry.subject}
+
+Our adventure team will review your message
+and get back to you as soon as possible.
+
+Your Enquiry ID:
+#{enquiry.id}
+
+Regards,
+
+Flying Fox Adventure
+Munnar, Kerala
+""",
+
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+
+                    to=[
+                        enquiry.email
+                    ],
+
+                )
+
+
+                customer_email.send(
+                    fail_silently=False
+                )
+
+
+                # ==================================
+                # BOTH EMAILS SENT
+                # ==================================
+
+                enquiry.email_sent = True
+
+                enquiry.save(
+                    update_fields=[
+                        "email_sent"
+                    ]
+                )
+
+
+                messages.success(
+                    request,
+                    (
+                        "Thank you! Your enquiry "
+                        "has been submitted successfully."
+                    )
+                )
+
+
+            except Exception as error:
+
+                print(
+                    "CONTACT EMAIL ERROR:",
+                    repr(error)
+                )
+
+                # The database enquiry remains saved
+                # even when email fails.
+
+                messages.warning(
+                    request,
+                    (
+                        "Your enquiry has been saved. "
+                        "Our team will contact you shortly."
+                    )
+                )
+
+
+            return redirect(
+                "contact"
+            )
+
+
+    else:
+
+        form = ContactEnquiryForm()
+
+
+    return render(
+        request,
+        "frontend/contact.html",
+        {
+            "form": form,
+        }
+    )
+
 
 
 def destination(request):
@@ -7720,12 +8469,359 @@ def blog_detail(request, slug):
 
     return render(
         request,
-<<<<<<< HEAD
         "frontend/blog_detail.html",
+        context,
+    )
+
+
+from .forms import OfferForm
+
+
+# ==========================================
+# OFFER CRUD
+# ==========================================
+
+# ==========================================
+# OFFER CRUD
+# ==========================================
+
+@_admin_required
+def offer_list(request):
+
+    offers_qs = (
+        Offer.objects
+        .prefetch_related("rides")
+        .select_related("coupon")
+        .all()
+    )
+
+    search = request.GET.get(
+        "search",
+        ""
+    ).strip()
+
+    status = request.GET.get(
+        "status",
+        ""
+    ).strip()
+
+    if search:
+        offers_qs = offers_qs.filter(
+            Q(title__icontains=search) |
+            Q(coupon__code__icontains=search) |
+            Q(rides__name__icontains=search)
+        ).distinct()
+
+    if status:
+        offers_qs = offers_qs.filter(
+            status=status
+        )
+
+    # refresh status for accurate display without forcing a write
+    for offer in offers_qs:
+        offer.refresh_status()
+
+    paginator = Paginator(
+        offers_qs,
+        10
+    )
+
+    offers = paginator.get_page(
+        request.GET.get("page")
+    )
+
+    return render(
+        request,
+        "admin_pages/offer_list.html",
         {
-            "blog": blog,
+            "offers": offers,
+            "search": search,
+            "selected_status": status,
+            "status_choices": Offer.STATUS_CHOICES,
+        }
+    )
+
+
+@_admin_required
+def offer_create(request):
+
+    if request.method == "POST":
+
+        form = OfferForm(
+            request.POST,
+            request.FILES
+        )
+
+        if form.is_valid():
+
+            offer = form.save()
+
+            offer.sync_coupon()
+
+            messages.success(
+                request,
+                f"Offer created successfully. Coupon code: {offer.coupon.code}"
+            )
+
+            return redirect(
+                "offer_list"
+            )
+
+        messages.error(
+            request,
+            "Please correct the errors below."
+        )
+
+    else:
+
+        form = OfferForm()
+
+    return render(
+        request,
+        "admin_pages/offer_form.html",
+        {
+            "form": form,
+        }
+    )
+
+
+@_admin_required
+def offer_update(request, slug):
+
+    offer = get_object_or_404(
+        Offer,
+        slug=slug
+    )
+
+    if request.method == "POST":
+
+        form = OfferForm(
+            request.POST,
+            request.FILES,
+            instance=offer
+        )
+
+        if form.is_valid():
+
+            offer = form.save()
+
+            offer.sync_coupon()
+
+            messages.success(
+                request,
+                "Offer updated successfully."
+            )
+
+            return redirect(
+                "offer_list"
+            )
+
+        messages.error(
+            request,
+            "Please correct the errors below."
+        )
+
+    else:
+
+        form = OfferForm(
+            instance=offer
+        )
+
+    return render(
+        request,
+        "admin_pages/offer_form.html",
+        {
+            "form": form,
+            "offer": offer,
+        }
+    )
+
+
+@_admin_required
+def offer_delete(request, slug):
+    offer = get_object_or_404(
+        Offer,
+        slug=slug,
+    )
+
+    if request.method == "POST":
+        title = offer.title
+
+        offer.delete()
+
+        messages.success(
+            request,
+            f'Offer "{title}" deleted successfully.',
+        )
+
+    return redirect("offer_list")
+
+
+
+    # offers management
+def offers(request):
+
+    today = timezone.localdate()
+
+    # =========================================================
+    # GET ALL OFFERS
+    # =========================================================
+
+    offers_qs = (
+        Offer.objects
+        .prefetch_related("rides")
+        .select_related("coupon")
+        .all()
+        .order_by("-created_at")
+    )
+
+    # =========================================================
+    # SEARCH
+    # =========================================================
+
+    search = request.GET.get("search", "").strip()
+
+    if search:
+
+        offers_qs = offers_qs.filter(
+            Q(title__icontains=search)
+            |
+            Q(description__icontains=search)
+            |
+            Q(coupon__code__icontains=search)
+            |
+            Q(rides__name__icontains=search)
+        ).distinct()
+
+    # =========================================================
+    # PREPARE DISPLAY STATUS
+    # =========================================================
+
+    active_count = 0
+    upcoming_count = 0
+    expired_count = 0
+
+    for offer in offers_qs:
+
+        if not offer.is_active:
+
+            offer.display_status = "expired"
+            offer.display_status_label = "Inactive"
+
+            expired_count += 1
+
+        elif offer.start_date > today:
+
+            offer.display_status = "upcoming"
+            offer.display_status_label = "Upcoming"
+
+            upcoming_count += 1
+
+        elif offer.start_date <= today <= offer.end_date:
+
+            offer.display_status = "active"
+            offer.display_status_label = "Active"
+
+            active_count += 1
+
+        else:
+
+            offer.display_status = "expired"
+            offer.display_status_label = "Expired"
+
+            expired_count += 1
+
+    # =========================================================
+    # PAGE STATISTICS
+    # =========================================================
+
+    total_count = offers_qs.count()
+
+    # =========================================================
+    # CONTEXT
+    # =========================================================
+
+    context = {
+
+        "offers": offers_qs,
+
+        "today": today,
+
+        "search": search,
+
+        "total_count": total_count,
+
+        "active_count": active_count,
+
+        "upcoming_count": upcoming_count,
+
+        "expired_count": expired_count,
+    }
+
+    return render(
+        request,
+        "frontend/offers.html",
+        context
+    ) 
+
+
+
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+
+from .models import Offer
+
+
+def frontend_offer_detail(request, slug):
+
+    today = timezone.localdate()
+
+    # -------------------------------------------------
+    # CURRENT OFFER
+    # -------------------------------------------------
+
+    offer = get_object_or_404(
+        Offer.objects
+        .prefetch_related("rides")
+        .select_related("coupon"),
+        slug=slug,
+    )
+
+    # Refresh status based on current date
+    offer.refresh_status()
+
+
+    # -------------------------------------------------
+    # RELATED OFFERS
+    # -------------------------------------------------
+
+    related_offers = (
+        Offer.objects
+        .filter(
+            is_active=True,
+            start_date__lte=today,
+            end_date__gte=today,
+        )
+        .exclude(pk=offer.pk)
+        .exclude(banner_image="")
+        .filter(banner_image__isnull=False)
+        .order_by("-created_at")[:3]
+    )
+
+
+    return render(
+        request,
+        "frontend/offer_detail.html",
+        {
+            "offer": offer,
+            "related_offers": related_offers,
+            "today": today,
         },
     )
+
+
+
+
 
 from .forms import OfferForm
 
@@ -7930,10 +9026,4 @@ def offer_delete(request, slug):
             f'Offer "{title}" deleted successfully.'
         )
 
-    return redirect(
-        "offer_list"
-=======
-        "frontend/blog-detail.html",
-        context,
->>>>>>> c83e6fd6785c9b2b38b9c3c26f94307eb59c09e0
-    )
+    return redirect("offer_list")

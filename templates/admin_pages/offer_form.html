@@ -51,19 +51,54 @@
             <!-- STATUS TOGGLE -->
 
 
-                {% if offer %}
-                    <div class="coupon-code-hint">
-                        Coupon code: <strong>{{ offer.coupon.code }}</strong>
-                    </div>
-                {% else %}
-                    
-                {% endif %}
+               <!-- STATUS TOGGLE -->
 
-                {% if form.is_active.errors %}
-                    <div class="field-error d-block">
-                        {{ form.is_active.errors|join:", " }}
-                    </div>
+<div class="col-md-4 mb-3">
+
+    <label class="form-label d-block">
+        Offer Availability
+    </label>
+
+    <div class="status-toggle-box">
+
+        <label class="toggle-switch">
+
+            {{ form.is_active }}
+
+            <span class="toggle-slider"></span>
+
+        </label>
+
+        <span class="status-toggle-text">
+            {% if form.is_active.value %}
+                Active
+            {% else %}
+                Inactive
+            {% endif %}
+        </span>
+
+    </div>
+
+    {% if offer %}
+        <div class="coupon-code-hint">
+            Coupon code:
+            <strong>
+                {% if offer.coupon %}
+                    {{ offer.coupon.code }}
+                {% else %}
+                    —
                 {% endif %}
+            </strong>
+        </div>
+    {% endif %}
+
+    {% if form.is_active.errors %}
+        <div class="field-error d-block">
+            {{ form.is_active.errors|join:", " }}
+        </div>
+    {% endif %}
+
+</div>
 
             </div>
 

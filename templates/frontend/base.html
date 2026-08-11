@@ -98,7 +98,6 @@
             </a>
             <div class="mobile-menu-right">
               <div class="mobile-menu-btn">
-                <button type="button" class="nav-right-link search-box-outer"><i class="far fa-search"></i></button>
               </div>
               <button
                 class="navbar-toggler"
@@ -123,7 +122,7 @@
                 </button>
               </div>
               <div class="offcanvas-body gap-xl-4">
-                <ul class="navbar-nav justify-content-end flex-grow-1">
+                <ul class="navbar-nav justify-content-center flex-grow-1">
 
                   <li class="nav-item">
                     <a class="nav-link {% block nav_home %}{% endblock %}" href="{% url 'home' %}">
@@ -141,6 +140,12 @@
                     <a class="nav-link {% block nav_rides %}{% endblock %}" href="{% url 'rides' %}">
                       Rides
                     </a>
+                  </li>
+
+                  <li class="nav-item">
+                     <a  class="nav-link {% block nav_offers %}{% endblock %}" href="{% url 'offers' %}">
+                      Offers
+                      </a>
                   </li>
 
                   <li class="nav-item">
@@ -165,8 +170,29 @@
                 <!-- nav-right -->
                 <div class="nav-right">
                   <div class="nav-btn">
+                    <a href="{% url 'user_signin' %}" class="theme-btn">Login <i class="fas fa-user"></i></a>
+                  </div>
+                  <div class="nav-btn">
                     <a href="{% url 'bookings' %}" class="theme-btn">Book Now<i class="fas fa-arrow-right"></i></a>
                   </div>
+
+
+                    <!-- Sidebar Button -->
+    <button
+        type="button"
+        class="sidebar-btn nav-right-link"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#sidebarPopup"
+        aria-controls="sidebarPopup"
+        aria-label="Open sidebar"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+
+
                 </div>
               </div>
             </div>
@@ -177,17 +203,177 @@
     </header>
     <!-- header area end -->
 
-    <!-- popup search -->
-    <div class="search-popup">
-      <button class="close-search"><span class="far fa-times"></span></button>
-      <form action="#">
-        <div class="form-group">
-          <input type="search" name="search-field" class="form-control" placeholder="Search Here..." required />
-          <button type="submit"><i class="far fa-search"></i></button>
-        </div>
-      </form>
+    <!-- =====================================================
+     SIDEBAR POPUP
+===================================================== -->
+
+<div
+    class="sidebar-popup offcanvas offcanvas-end"
+    tabindex="-1"
+    id="sidebarPopup"
+    aria-labelledby="sidebarPopupLabel"
+>
+
+    <!-- Sidebar Header -->
+    <div class="offcanvas-header">
+
+        <a
+            href="{% url 'home' %}"
+            class="sidebar-popup-logo"
+            id="sidebarPopupLabel"
+        >
+            <img
+                src="{% static 'frontend/assets/img/logo/logo.png' %}"
+                alt="Flying Fox Adventure"
+            />
+        </a>
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+        >
+            <i class="far fa-xmark"></i>
+        </button>
+
     </div>
-    <!-- popup search end -->
+
+
+    <!-- Sidebar Body -->
+    <div class="sidebar-popup-wrap offcanvas-body">
+
+        <div class="sidebar-popup-content">
+
+
+            <!-- About -->
+            <div class="sidebar-popup-about">
+
+                <h4>
+                    About Flying Fox
+                </h4>
+
+                <p>
+                    Experience the thrill of soaring above Munnar's
+                    breathtaking valleys with professional adventure
+                    guides, quality safety equipment, and unforgettable
+                    Flying Fox experiences.
+                </p>
+
+            </div>
+
+
+            <!-- Contact -->
+            <div class="sidebar-popup-contact">
+
+                <h4>
+                    Contact Info
+                </h4>
+
+                <ul>
+
+                    <!-- Email -->
+                    <li>
+
+                        <div class="icon">
+                            <i class="far fa-envelope"></i>
+                        </div>
+
+                        <div class="content">
+
+                            <h5>
+                                Email
+                            </h5>
+
+                            <a href="mailto:adventureflyingfox@gmail.com">
+                                adventureflyingfox@gmail.com
+                            </a>
+
+                        </div>
+
+                    </li>
+
+
+                    <!-- Phone -->
+                    <li>
+
+                        <div class="icon">
+                            <i class="far fa-phone"></i>
+                        </div>
+
+                        <div class="content">
+
+                            <h5>
+                                Phone
+                            </h5>
+
+                            <a href="tel:+917907219198">
+                                +91 7907219198
+                            </a>
+
+                        </div>
+
+                    </li>
+
+
+                    <!-- Address -->
+                    <li>
+
+                        <div class="icon">
+                            <i class="far fa-location-dot"></i>
+                        </div>
+
+                        <div class="content">
+
+                            <h5>
+                                Address
+                            </h5>
+
+                            <span>
+                                Thekkumkanam, Kerala
+                            </span>
+
+                        </div>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Social -->
+            <div class="sidebar-popup-social">
+
+                <h4>
+                    Follow Us
+                </h4>
+
+                <a href="#" aria-label="Facebook">
+                    <i class="fab fa-facebook"></i>
+                </a>
+
+                <a href="#" aria-label="X">
+                    <i class="fab fa-x-twitter"></i>
+                </a>
+
+                <a href="#" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+
+                <a href="#" aria-label="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- sidebar popup end -->
 
     <main class="main">
       {% block content %}{% endblock %}
@@ -202,7 +388,7 @@
               <div class="col-lg-4">
                 <div class="footer-widget-box about-us">
                   <a href="#" class="footer-logo">
-                    <img src="{% static 'frontend/assets/img/logo/logo-light.png' %}" alt="" />
+                    <img src="{% static 'frontend/assets/img/logo/logo.png' %}" alt="" />
                   </a>
                   <p>
                     Experience the thrill of soaring above Munnar's breathtaking valleys with world-class safety, professional guides, and unforgettable Flying Fox adventures designed for every thrill seeker.
@@ -564,9 +750,9 @@
         src="{% static 'frontend/assets/js/flyingfox-chatbot.js' %}"
     ></script>
 
-    <!-- scroll-top -->
+    {% comment %} <!-- scroll-top -->
     <a href="#" id="scroll-top"><i class="fas fa-arrow-up-long"></i></a>
-    <!-- scroll-top end -->
+    <!-- scroll-top end --> {% endcomment %}
 
     <!-- js -->
     <script src="{% static 'frontend/assets/js/jquery-3.7.1.min.js' %}"></script>

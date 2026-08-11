@@ -1,0 +1,2261 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+
+{% block title %}
+Offers & Deals - Flying Fox Adventure
+{% endblock %}
+
+
+{% block nav_offers %}
+active
+{% endblock %}
+
+
+
+{% block extra_css %}
+
+<style>
+
+/* =========================================================
+   OFFERS PAGE
+========================================================= */
+
+.ff-offers-page {
+    position: relative;
+
+    padding:
+        120px
+        0
+        100px;
+
+    overflow: hidden;
+
+    background: #ffffff;
+}
+
+
+/* decorative circles */
+
+.ff-offers-page::before {
+    content: "";
+
+    position: absolute;
+
+    width: 520px;
+    height: 520px;
+
+    top: 140px;
+    left: -300px;
+
+    border:
+        1px solid
+        rgba(195, 17, 3, 0.07);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+
+.ff-offers-page::after {
+    content: "";
+
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    right: -230px;
+    bottom: 130px;
+
+    border:
+        1px solid
+        rgba(195, 17, 3, 0.06);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+
+.ff-offers-page .container {
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   PAGE HEADING
+========================================================= */
+
+.ff-offers-heading {
+    max-width: 830px;
+
+    margin:
+        0
+        auto
+        35px;
+
+    text-align: center;
+}
+
+
+.ff-offers-heading-tag {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 14px;
+
+    color: #c31103;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.6px;
+
+    text-transform: uppercase;
+}
+
+
+.ff-offers-heading h1 {
+    margin:
+        0
+        0
+        17px;
+
+    color: #171717;
+
+    font-size:
+        clamp(
+            44px,
+            5vw,
+            72px
+        );
+
+    font-weight: 900;
+
+    line-height: 1;
+
+    letter-spacing: -2px;
+
+    text-transform: uppercase;
+}
+
+
+.ff-offers-heading h1 span {
+    color: #c31103;
+}
+
+
+.ff-offers-heading p {
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    color: #666666;
+
+    font-size: 15px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.ff-offer-stats {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin:
+        30px
+        0
+        35px;
+}
+
+
+.ff-offer-stat {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    min-height: 42px;
+
+    padding:
+        8px
+        15px;
+
+    color: #555555;
+
+    background: #fff5f3;
+
+    border:
+        1px solid
+        rgba(195, 17, 3, 0.10);
+
+    border-radius: 50px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+.ff-offer-stat strong {
+    color: #c31103;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.ff-offer-search-wrap {
+    max-width: 570px;
+
+    margin:
+        0
+        auto
+        32px;
+}
+
+
+.ff-offer-search {
+    position: relative;
+
+    display: flex;
+
+    width: 100%;
+
+    align-items: center;
+
+    padding:
+        6px
+        6px
+        6px
+        20px;
+
+    background: #ffffff;
+
+    border:
+        1px solid
+        rgba(195, 17, 3, 0.18);
+
+    border-radius: 50px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.055);
+}
+
+
+.ff-offer-search i {
+    color: #c31103;
+}
+
+
+.ff-offer-search input {
+    width: 100%;
+
+    min-width: 0;
+
+    padding:
+        10px
+        12px;
+
+    color: #222222;
+
+    background: transparent;
+
+    border: none;
+
+    outline: none;
+
+    font-size: 13px;
+}
+
+
+.ff-offer-search button {
+    display: inline-flex;
+
+    min-width: 105px;
+    min-height: 43px;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding:
+        8px
+        17px;
+
+    color: #ffffff;
+
+    background: #c31103;
+
+    border: none;
+
+    border-radius: 50px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+.ff-offer-filter-wrap {
+    display: flex;
+
+    justify-content: center;
+
+    margin-bottom: 45px;
+}
+
+
+.ff-offer-filter {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 9px;
+}
+
+
+.ff-offer-filter-btn {
+    min-height: 47px;
+
+    padding:
+        9px
+        20px;
+
+    color: #292929;
+
+    background: #ffffff;
+
+    border:
+        1px solid
+        rgba(195, 17, 3, 0.20);
+
+    border-radius: 50px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        all
+        0.3s ease;
+}
+
+
+.ff-offer-filter-btn:hover {
+    color: #c31103;
+
+    background: #fff5f3;
+}
+
+
+.ff-offer-filter-btn.active {
+    color: #ffffff;
+
+    background: #c31103;
+
+    border-color: #c31103;
+
+    box-shadow:
+        0 10px 25px
+        rgba(195, 17, 3, 0.20);
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.ff-offers-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 25px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.ff-offer-card {
+    position: relative;
+
+    display: flex;
+
+    min-width: 0;
+    height: 100%;
+
+    flex-direction: column;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border:
+        1px solid
+        rgba(195, 17, 3, 0.09);
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(0, 0, 0, 0.075);
+
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+
+.ff-offer-card:hover {
+    transform:
+        translateY(-6px);
+
+    box-shadow:
+        0 20px 48px
+        rgba(195, 17, 3, 0.13);
+}
+
+
+.ff-offer-card.ff-offer-hidden {
+    display: none;
+}
+
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+.ff-offer-image-link {
+    display: block;
+
+    color: inherit;
+
+    text-decoration: none;
+}
+
+
+.ff-offer-image {
+    position: relative;
+
+    width: 100%;
+    height: 320px;
+
+    overflow: hidden;
+
+    background: #f4f4f4;
+}
+
+
+.ff-offer-image img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    transition:
+        transform
+        0.55s ease;
+}
+
+
+.ff-offer-card:hover
+.ff-offer-image img {
+    transform: scale(1.045);
+}
+
+
+/* fallback if no banner */
+
+.ff-offer-no-image {
+    display: flex;
+
+    width: 100%;
+    height: 100%;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #db1709,
+            #a70d03
+        );
+}
+
+
+.ff-offer-no-image i {
+    font-size: 38px;
+}
+
+
+.ff-offer-no-image span {
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.ff-offer-status {
+    position: absolute;
+
+    top: 14px;
+    right: 14px;
+
+    z-index: 4;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    min-height: 31px;
+
+    padding:
+        5px
+        11px;
+
+    color: #ffffff;
+
+    border-radius: 50px;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 0, 0, 0.15);
+}
+
+
+.ff-offer-status.active {
+    background: #17944d;
+}
+
+
+.ff-offer-status.upcoming {
+    background: #f39a09;
+}
+
+
+.ff-offer-status.expired {
+    background: #666666;
+}
+
+
+.ff-offer-status-dot {
+    width: 7px;
+    height: 7px;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   DISCOUNT
+========================================================= */
+
+.ff-offer-discount {
+    position: absolute;
+
+    left: 15px;
+    bottom: 15px;
+
+    z-index: 4;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    padding:
+        7px
+        12px;
+
+    color: #c31103;
+
+    background: #ffffff;
+
+    border-radius: 50px;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, 0.13);
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.ff-offer-content {
+    display: flex;
+
+    flex: 1;
+
+    flex-direction: column;
+
+    padding: 23px;
+}
+
+
+.ff-offer-content h3 {
+    margin:
+        0
+        0
+        10px;
+
+    color: #191919;
+
+    font-size: 20px;
+
+    font-weight: 850;
+
+    line-height: 1.3;
+}
+
+
+.ff-offer-title-link {
+    color: inherit;
+
+    text-decoration: none;
+}
+
+
+.ff-offer-title-link:hover {
+    color: #c31103;
+}
+
+
+.ff-offer-description {
+    margin-bottom: 17px;
+
+    color: #6a6a6a;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   RIDES
+========================================================= */
+
+.ff-offer-rides {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-bottom: 18px;
+}
+
+
+.ff-offer-ride-tag {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding:
+        5px
+        9px;
+
+    color: #c31103;
+
+    background: #fff2ef;
+
+    border-radius: 7px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+.ff-offer-details {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 9px;
+
+    margin-bottom: 20px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid
+        rgba(195, 17, 3, 0.09);
+}
+
+
+.ff-offer-detail {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 8px;
+
+    color: #606060;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+.ff-offer-detail i {
+    width: 17px;
+
+    margin-top: 3px;
+
+    color: #c31103;
+}
+
+
+/* =========================================================
+   COUPON
+========================================================= */
+
+.ff-offer-coupon {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+
+    padding:
+        10px
+        12px;
+
+    background: #fff8f6;
+
+    border:
+        1px dashed
+        rgba(195, 17, 3, 0.28);
+
+    border-radius: 11px;
+}
+
+
+.ff-offer-coupon span {
+    color: #777777;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+}
+
+
+.ff-offer-coupon strong {
+    color: #c31103;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    letter-spacing: 0.5px;
+}
+
+
+/* =========================================================
+   BOTTOM
+========================================================= */
+
+.ff-offer-bottom {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-top: auto;
+}
+
+
+.ff-offer-value small {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: #8a8a8a;
+
+    font-size: 10px;
+}
+
+
+.ff-offer-value strong {
+    display: block;
+
+    color: #c31103;
+
+    font-size: 22px;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   VIEW BUTTON
+========================================================= */
+
+.ff-offer-view {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    min-height: 45px;
+
+    padding:
+        7px
+        8px
+        7px
+        17px;
+
+    color: #ffffff;
+
+    background: #c31103;
+
+    border-radius: 50px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    text-decoration: none;
+
+    transition:
+        all
+        0.3s ease;
+}
+
+
+.ff-offer-view:hover {
+    color: #ffffff;
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 9px 23px
+        rgba(195, 17, 3, 0.23);
+}
+
+
+.ff-offer-view i {
+    display: inline-flex;
+
+    width: 30px;
+    height: 30px;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #c31103;
+
+    background: #ffffff;
+
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.ff-no-offers {
+    grid-column:
+        1 / -1;
+
+    padding:
+        70px
+        30px;
+
+    text-align: center;
+
+    background: #fff7f5;
+
+    border:
+        1px dashed
+        rgba(195, 17, 3, 0.18);
+
+    border-radius: 25px;
+}
+
+
+.ff-no-offers-icon {
+    display: inline-flex;
+
+    width: 72px;
+    height: 72px;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 18px;
+
+    color: #ffffff;
+
+    background: #c31103;
+
+    border-radius: 50%;
+
+    font-size: 25px;
+}
+
+
+.ff-no-offers h3 {
+    margin-bottom: 8px;
+
+    color: #222222;
+
+    font-size: 25px;
+
+    font-weight: 850;
+}
+
+
+.ff-no-offers p {
+    margin: 0;
+
+    color: #777777;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   NOTE
+========================================================= */
+
+.ff-offer-note-box {
+    margin-top: 50px;
+
+    padding:
+        22px
+        25px;
+
+    color: #666666;
+
+    background: #fff7f5;
+
+    border:
+        1px solid
+        rgba(195, 17, 3, 0.10);
+
+    border-radius: 17px;
+
+    text-align: center;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+.ff-offer-note-box i {
+    margin-right: 6px;
+
+    color: #c31103;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1199px) {
+
+    .ff-offers-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+@media (max-width: 991px) {
+
+    .ff-offers-page {
+        padding:
+            100px
+            0
+            75px;
+    }
+
+}
+
+
+@media (max-width: 767px) {
+
+    .ff-offers-page {
+        padding:
+            80px
+            0
+            60px;
+    }
+
+
+    .ff-offers-heading h1 {
+        font-size: 42px;
+    }
+
+
+    .ff-offers-heading p {
+        font-size: 13px;
+    }
+
+
+    .ff-offer-search {
+        border-radius: 15px;
+    }
+
+
+    .ff-offer-search button {
+        min-width: auto;
+
+        padding:
+            8px
+            14px;
+    }
+
+
+    .ff-offer-search button span {
+        display: none;
+    }
+
+
+    .ff-offer-filter-wrap {
+        display: block;
+
+        overflow-x: auto;
+
+        scrollbar-width: none;
+    }
+
+
+    .ff-offer-filter-wrap::-webkit-scrollbar {
+        display: none;
+    }
+
+
+    .ff-offer-filter {
+        width: max-content;
+
+        flex-wrap: nowrap;
+
+        justify-content: flex-start;
+    }
+
+
+    .ff-offers-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .ff-offer-image {
+        height: 250px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .ff-offers-heading h1 {
+        font-size: 36px;
+    }
+
+
+    .ff-offer-image {
+        height: 215px;
+    }
+
+
+    .ff-offer-content {
+        padding: 19px;
+    }
+
+
+    .ff-offer-content h3 {
+        font-size: 18px;
+    }
+
+
+    .ff-offer-bottom {
+        align-items: flex-end;
+    }
+
+}
+
+{% comment %} offers css start {% endcomment %}
+/* =========================================================
+   OFFERS TOP AREA
+========================================================= */
+
+.ff-offers-top {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.15fr)
+        minmax(360px, 0.85fr);
+
+    align-items: center;
+
+    gap: 80px;
+
+    margin-bottom: 60px;
+
+    padding-bottom: 45px;
+
+    border-bottom:
+        1px solid rgba(195, 17, 3, 0.10);
+}
+
+
+/* =========================================================
+   LEFT CONTENT
+========================================================= */
+
+.ff-offers-top-left {
+    max-width: 720px;
+}
+
+
+.ff-offers-heading-tag {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+
+    color: #c31103;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    letter-spacing: 0.7px;
+
+    text-transform: uppercase;
+}
+
+
+.ff-offers-heading-tag i {
+    font-size: 12px;
+}
+
+
+.ff-offers-top-left h1 {
+    margin:
+        0
+        0
+        20px;
+
+    color: #171717;
+
+    font-size:
+        clamp(
+            45px,
+            5vw,
+            72px
+        );
+
+    font-weight: 900;
+
+    line-height: 0.98;
+
+    letter-spacing: -2.5px;
+
+    text-transform: uppercase;
+}
+
+
+.ff-offers-top-left h1 span {
+    color: #c31103;
+}
+
+
+.ff-offers-top-left p {
+    max-width: 660px;
+
+    margin: 0;
+
+    color: #686868;
+
+    font-size: 15px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   RIGHT SEARCH AREA
+========================================================= */
+
+.ff-offers-top-right {
+    width: 100%;
+
+    max-width: 520px;
+
+    margin-left: auto;
+}
+
+
+/* small heading above search */
+
+.ff-search-title {
+    margin-bottom: 16px;
+}
+
+
+.ff-search-title span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #c31103;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 0.8px;
+
+    text-transform: uppercase;
+}
+
+
+.ff-search-title h4 {
+    margin: 0;
+
+    color: #202020;
+
+    font-size: 22px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   SEARCH BAR
+========================================================= */
+
+.ff-offer-search {
+    position: relative;
+
+    display: flex;
+
+    width: 100%;
+
+    align-items: center;
+
+    padding:
+        7px
+        7px
+        7px
+        21px;
+
+    background: #ffffff;
+
+    border:
+        1px solid rgba(195, 17, 3, 0.20);
+
+    border-radius: 50px;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.07);
+
+    transition:
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.ff-offer-search:focus-within {
+    border-color: rgba(195, 17, 3, 0.55);
+
+    box-shadow:
+        0 15px 38px rgba(195, 17, 3, 0.10);
+}
+
+
+/* first search icon only */
+
+.ff-offer-search > i {
+    flex-shrink: 0;
+
+    color: #c31103;
+
+    font-size: 15px;
+}
+
+
+/* input */
+
+.ff-offer-search input {
+    width: 100%;
+    min-width: 0;
+
+    padding:
+        11px
+        14px;
+
+    color: #222222;
+
+    background: transparent;
+
+    border: none;
+    outline: none;
+
+    font-size: 13px;
+}
+
+
+.ff-offer-search input::placeholder {
+    color: #9b9b9b;
+}
+
+
+/* search button */
+
+.ff-offer-search button {
+    display: inline-flex;
+
+    min-width: 115px;
+    min-height: 46px;
+
+    flex-shrink: 0;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding:
+        8px
+        18px;
+
+    color: #ffffff;
+
+    background: #c31103;
+
+    border: none;
+
+    border-radius: 50px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.ff-offer-search button:hover {
+    background: #a90e02;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 20px rgba(195, 17, 3, 0.22);
+}
+
+
+.ff-offer-search button i {
+    color: #ffffff;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   OFFERS GRID
+========================================================= */
+
+.ff-offers-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 25px;
+}
+
+
+/* =========================================================
+   LARGE TABLET
+========================================================= */
+
+@media (max-width: 1199px) {
+
+    .ff-offers-top {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(330px, 0.75fr);
+
+        gap: 45px;
+    }
+
+
+    .ff-offers-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .ff-offers-top {
+        grid-template-columns: 1fr;
+
+        gap: 30px;
+
+        margin-bottom: 45px;
+    }
+
+
+    .ff-offers-top-left {
+        max-width: 750px;
+    }
+
+
+    .ff-offers-top-right {
+        max-width: 650px;
+
+        margin-left: 0;
+    }
+
+
+    .ff-offers-top-left h1 {
+        font-size: 55px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .ff-offers-top {
+        gap: 25px;
+
+        margin-bottom: 35px;
+
+        padding-bottom: 35px;
+    }
+
+
+    .ff-offers-top-left h1 {
+        font-size: 42px;
+
+        letter-spacing: -1.5px;
+    }
+
+
+    .ff-offers-top-left p {
+        font-size: 13px;
+
+        line-height: 1.7;
+    }
+
+
+    .ff-search-title h4 {
+        font-size: 19px;
+    }
+
+
+    .ff-offer-search {
+        padding:
+            5px
+            5px
+            5px
+            16px;
+    }
+
+
+    .ff-offer-search button {
+        min-width: 48px;
+        width: 48px;
+        height: 44px;
+
+        padding: 0;
+    }
+
+
+    .ff-offer-search button span {
+        display: none;
+    }
+
+
+    .ff-offers-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .ff-offers-top-left h1 {
+        font-size: 36px;
+    }
+
+
+    .ff-offers-heading-tag {
+        font-size: 11px;
+    }
+
+
+    .ff-offer-search input {
+        padding:
+            10px
+            9px;
+
+        font-size: 12px;
+    }
+
+}
+
+{% comment %} offers css end  {% endcomment %}
+
+</style>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<!-- =========================================================
+     BREADCRUMB
+========================================================= -->
+
+<div
+    class="site-breadcrumb"
+    style="
+        background-image:
+        url('{% static 'frontend/assets/img/about/offers-banner-2.png' %}');
+    ">
+
+    <div class="container">
+
+        <h3 class="breadcrumb-title">
+            Offers
+        </h3>
+
+        <ul class="breadcrumb-menu">
+
+            <li>
+                <a href="{% url 'home' %}">
+                    Home
+                </a>
+            </li>
+
+            <li class="active">
+                Offers
+            </li>
+
+        </ul>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     OFFERS
+========================================================= -->
+
+<section class="ff-offers-page">
+
+    <div class="container">
+
+
+          <!-- TOP TITLE + SEARCH -->
+        <div class="ff-offers-top">
+
+            <div class="ff-offers-top-left">
+
+                <span class="ff-offers-heading-tag">
+                    <i class="fas fa-tags"></i>
+                    Flying Fox Adventure Deals
+                </span>
+
+                <h1>
+                    Adventure
+                    <span>Offers</span>
+                </h1>
+
+                <p>
+                    Discover our latest Flying Fox Adventure deals,
+                    promotional discounts and limited-time offers.
+                    Choose your favourite ride and make your Munnar
+                    adventure even more exciting.
+                </p>
+
+            </div>
+
+
+            <div class="ff-offers-top-right">
+
+                <div class="ff-search-title">
+
+                    <span>
+                        Find Your Deal
+                    </span>
+
+                    <h4>
+                        Search Offers
+                    </h4>
+
+                </div>
+
+
+                <form
+                    method="GET"
+                    action="{% url 'offers' %}"
+                    class="ff-offer-search"
+                >
+
+                    <i class="fas fa-search"></i>
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        placeholder="Search offers, rides or coupon code..."
+                    >
+
+                    <button type="submit">
+
+                        <span>
+                            Search
+                        </span>
+
+                        <i class="fas fa-arrow-right"></i>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             STATUS FILTER
+        ====================================================== -->
+
+        {% comment %} <div class="ff-offer-filter-wrap">
+
+            <div class="ff-offer-filter">
+
+
+                <button
+                    type="button"
+                    class="ff-offer-filter-btn active"
+                    data-filter="all"
+                >
+                    All Offers
+                </button>
+
+
+                <button
+                    type="button"
+                    class="ff-offer-filter-btn"
+                    data-filter="active"
+                >
+                    Active
+                </button>
+
+
+                <button
+                    type="button"
+                    class="ff-offer-filter-btn"
+                    data-filter="upcoming"
+                >
+                    Upcoming
+                </button>
+
+
+                <button
+                    type="button"
+                    class="ff-offer-filter-btn"
+                    data-filter="expired"
+                >
+                    Expired
+                </button>
+
+
+            </div>
+
+        </div> {% endcomment %}
+
+
+
+        <!-- =====================================================
+             DYNAMIC DATABASE OFFERS
+        ====================================================== -->
+
+        <div class="ff-offers-grid">
+
+
+            {% for offer in offers %}
+
+
+            <article
+                class="ff-offer-card"
+                data-status="{{ offer.display_status }}"
+            >
+
+
+                <!-- =================================================
+                     IMAGE
+                ================================================== -->
+
+                <a
+                    href="{% url 'frontend_offer_detail' offer.slug %}"
+                    class="ff-offer-image-link"
+                >
+
+                    <div class="ff-offer-image">
+
+
+                        <!-- STATUS -->
+
+                        <span
+                            class="
+                                ff-offer-status
+                                {{ offer.display_status }}
+                            "
+                        >
+
+                            <span
+                                class="ff-offer-status-dot"
+                            ></span>
+
+                            {{ offer.display_status_label }}
+
+                        </span>
+
+
+
+                        <!-- IMAGE -->
+
+                        {% if offer.banner_image %}
+
+                        <img
+                            src="{{ offer.banner_image.url }}"
+                            alt="{{ offer.title }}"
+                            loading="lazy"
+                        >
+
+                        {% else %}
+
+                        <div class="ff-offer-no-image">
+
+                            <i class="fas fa-ticket-alt"></i>
+
+                            <span>
+                                Flying Fox Offer
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+
+
+                        <!-- DISCOUNT -->
+
+                        <span class="ff-offer-discount">
+
+                            {% if offer.discount_type == "percentage" %}
+
+                                {{ offer.discount_value|floatformat:"-2" }}%
+                                OFF
+
+                            {% else %}
+
+                                ₹{{ offer.discount_value|floatformat:"-2" }}
+                                OFF
+
+                            {% endif %}
+
+                        </span>
+
+
+                    </div>
+
+                </a>
+
+
+
+                <!-- =================================================
+                     CONTENT
+                ================================================== -->
+
+                <div class="ff-offer-content">
+
+
+                    <h3>
+
+                        <a
+                            href="{% url 'frontend_offer_detail' offer.slug %}"
+                            class="ff-offer-title-link"
+                        >
+
+                            {{ offer.title }}
+
+                        </a>
+
+                    </h3>
+
+
+
+                    <!-- DESCRIPTION -->
+
+                    {% if offer.description %}
+
+                    <p class="ff-offer-description">
+
+                        {{ offer.description|striptags|truncatechars:120 }}
+
+                    </p>
+
+                    {% endif %}
+
+
+
+                    <!-- =================================================
+                         ELIGIBLE RIDES
+                    ================================================== -->
+
+                    {% if offer.rides.all %}
+
+                    <div class="ff-offer-rides">
+
+                        {% for ride in offer.rides.all %}
+
+                            <span class="ff-offer-ride-tag">
+
+                                <i class="fas fa-bolt"></i>
+
+                                {{ ride.name }}
+
+                            </span>
+
+                        {% empty %}
+
+                            <span class="ff-offer-ride-tag">
+                                Selected Rides
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+
+
+                    <!-- =================================================
+                         DATES
+                    ================================================== -->
+
+                    <div class="ff-offer-details">
+
+
+                        <span class="ff-offer-detail">
+
+                            <i class="far fa-calendar-alt"></i>
+
+                            Starts
+                            {{ offer.start_date|date:"d M Y" }}
+
+                        </span>
+
+
+                        <span class="ff-offer-detail">
+
+                            <i class="far fa-calendar-check"></i>
+
+                            Valid until
+                            {{ offer.end_date|date:"d M Y" }}
+
+                        </span>
+
+
+                        {% if offer.coupon %}
+
+                        <span class="ff-offer-detail">
+
+                            <i class="fas fa-ticket-alt"></i>
+
+                            Coupon:
+                            {{ offer.coupon.code }}
+
+                        </span>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         COUPON
+                    ================================================== -->
+
+                    {% if offer.coupon %}
+
+                    <div class="ff-offer-coupon">
+
+                        <span>
+                            Coupon Code
+                        </span>
+
+                        <strong>
+                            {{ offer.coupon.code }}
+                        </strong>
+
+                    </div>
+
+                    {% endif %}
+
+
+
+                    <!-- =================================================
+                         BOTTOM
+                    ================================================== -->
+
+                    <div class="ff-offer-bottom">
+
+
+                        <div class="ff-offer-value">
+
+                            <small>
+                                You Save
+                            </small>
+
+
+                            <strong>
+
+                                {% if offer.discount_type == "percentage" %}
+
+                                    {{ offer.discount_value|floatformat:"-2" }}%
+
+                                {% else %}
+
+                                    ₹{{ offer.discount_value|floatformat:"-2" }}
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+
+
+                        <a
+                            href="{% url 'frontend_offer_detail' offer.slug %}"
+                            class="ff-offer-view"
+                        >
+
+                            View Offer
+
+                            <i class="fas fa-arrow-right"></i>
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </article>
+
+
+            {% empty %}
+
+
+            <!-- =================================================
+                 NO OFFERS
+            ================================================== -->
+
+            <div class="ff-no-offers">
+
+                <div class="ff-no-offers-icon">
+
+                    <i class="fas fa-ticket-alt"></i>
+
+                </div>
+
+
+                <h3>
+                    No Offers Found
+                </h3>
+
+
+                <p>
+
+                    There are currently no Flying Fox Adventure
+                    offers matching your search.
+
+                </p>
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+
+        <!-- =====================================================
+             NOTE
+        ====================================================== -->
+
+        {% if offers %}
+
+        <div class="ff-offer-note-box">
+
+            <i class="fas fa-circle-info"></i>
+
+            Offers are subject to availability, selected ride,
+            booking date, weather conditions and applicable
+            terms & conditions.
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</section>
+
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* =====================================================
+           ELEMENTS
+        ===================================================== */
+
+        const filterButtons =
+            document.querySelectorAll(
+                ".ff-offer-filter-btn"
+            );
+
+
+        const offerCards =
+            document.querySelectorAll(
+                ".ff-offer-card"
+            );
+
+
+        /* =====================================================
+           FILTER
+        ===================================================== */
+
+        filterButtons.forEach(
+            function (button) {
+
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+
+                        const selectedStatus =
+                            this.dataset.filter;
+
+
+                        /* -----------------------------------------
+                           BUTTON ACTIVE
+                        ----------------------------------------- */
+
+                        filterButtons.forEach(
+                            function (filterButton) {
+
+                                filterButton.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+
+                        this.classList.add(
+                            "active"
+                        );
+
+
+                        /* -----------------------------------------
+                           FILTER CARDS
+                        ----------------------------------------- */
+
+                        offerCards.forEach(
+                            function (card) {
+
+
+                                const cardStatus =
+                                    card.dataset.status;
+
+
+                                if (
+                                    selectedStatus === "all"
+                                    ||
+                                    cardStatus === selectedStatus
+                                ) {
+
+                                    card.classList.remove(
+                                        "ff-offer-hidden"
+                                    );
+
+                                }
+
+                                else {
+
+                                    card.classList.add(
+                                        "ff-offer-hidden"
+                                    );
+
+                                }
+
+
+                            }
+                        );
+
+
+                    }
+                );
+
+
+            }
+        );
+
+
+    }
+);
+
+</script>
+
+{% endblock %}

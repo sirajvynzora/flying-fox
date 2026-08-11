@@ -1,35 +1,11 @@
+{% extends "frontend/base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% block title %}Book Your Adventure | Flying Fox Adventure{% endblock %}
 
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>
-    Book Your Adventure | Flying Fox Adventure
-  </title>
-
-  <!-- Bootstrap -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  >
-
-  <!-- Font Awesome -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-  >
-
-  <style>
-
-    /* =====================================================
+{% block extra_css %}
+<style>
+/* =====================================================
        GLOBAL
     ===================================================== */
 
@@ -1174,7 +1150,7 @@
   cursor: pointer;
   transition:
     border-color 0.3s ease,
-    background 0.3s ease,
+    *background* 0.3s ease,
     box-shadow 0.3s ease,
     transform 0.3s ease;
 }
@@ -1277,7 +1253,7 @@
   transition:
     border-color 0.25s ease,
     color 0.25s ease,
-    background 0.25s ease;
+    *background* 0.25s ease;
 }
 
 .ff-ride-list-item.is-selected .ff-ride-list-check {
@@ -1375,53 +1351,33 @@
   }
 }
 
-  </style>
+/* =====================================================
+   BASE.HTML HEADER CLEARANCE
+   base.html uses: <header class="header-2 h-abs">
+   This keeps the booking page below that navbar.
+===================================================== */
+.ff-booking-page {
+    padding-top: 190px;
+}
 
-</head>
+@media (max-width: 991px) {
+    .ff-booking-page {
+        padding-top: 145px;
+    }
+}
 
-<body>
+@media (max-width: 767px) {
+    .ff-booking-page {
+        padding-top: 125px;
+    }
+}
+</style>
+{% endblock %}
 
-  <!-- ===================================================
-       HEADER
-  ==================================================== -->
+{% block content %}
 
-  <header class="ff-header">
-
-    <div class="container">
-
-      <div class="ff-header-inner">
-
-        <a href="/" class="ff-logo">
-
-          <span class="ff-logo-mark">
-            <i class="fas fa-person-falling"></i>
-          </span>
-
-          <span class="ff-logo-text">
-            <strong>Flying Fox</strong>
-            <small>Adventure Munnar</small>
-          </span>
-
-        </a>
-
-        <a href="/" class="ff-header-action">
-          <i class="fas fa-house"></i>
-          <span>Back to Home</span>
-        </a>
-
-      </div>
-
-    </div>
-
-  </header>
-
-  <!-- ===================================================
-       BOOKING PAGE
-  ==================================================== -->
-
-  <main class="ff-booking-page">
-
-    <div class="container">
+<section class="ff-booking-page">
+<div class="container">
 
       <div class="row g-4 ff-booking-row">
 
@@ -2150,18 +2106,13 @@
       </div>
 
     </div>
+</section>
 
-  </main>
+{% endblock %}
 
-  <!-- Bootstrap JavaScript -->
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-  ></script>
-
-  <script>
-
-    document.addEventListener("DOMContentLoaded", function () {
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
       const participantsContainer = document.getElementById(
         "participantsContainer"
@@ -2789,8 +2740,5 @@ const selectedRidePriceTextElement = document.getElementById(
       updateSummary();
 
     });
-
-  </script>
-
-</body>
-</html>
+</script>
+{% endblock %}
