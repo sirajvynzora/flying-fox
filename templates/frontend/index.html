@@ -265,130 +265,10 @@
       {% comment %} featured ride start {% endcomment %}
 
       <!-- featured rides -->
-{% comment %} <div class="tour-category py-120">
 
-  <div class="container">
-
-    <!-- Section Heading -->
-    <div class="row">
-
-      <div class="col-lg-7 mx-auto">
-
-        <div
-          class="site-heading text-center wow fadeInUp"
-          data-wow-delay=".2s"
-        >
-
-          <span class="site-title-tagline">
-
-            <i class="far fa-person-running"></i>
-
-            Featured Rides
-
-          </span>
-
-          <h3 class="site-title">
-            Explore Our Featured Adventures
-          </h3>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- Featured Ride Cards -->
-    <div class="row g-4 g-lg-5 justify-content-center">
-
-      {% for ride in featured_rides %}
-
-        <div class="col-6 col-md-4 col-lg-2">
-
-          <div
-            class="category-item wow fadeInUp
-            {% if forloop.counter|divisibleby:2 %}mt-lg-5{% endif %}"
-            data-wow-delay=".{{ forloop.counter }}s"
-          >
-
-            <!-- Ride Image -->
-            <div class="category-img">
-
-              {% if ride.featured_images.0 %}
-
-                <img
-                  src="{{ ride.featured_images.0.image.url }}"
-                  alt="{{ ride.name }}"
-                />
-
-              {% else %}
-
-                <img
-                  src="{% static 'frontend/assets/img/category/default.webp' %}"
-                  alt="{{ ride.name }}"
-                />
-
-              {% endif %}
-
-            </div>
-
-
-            <!-- Ride Content -->
-            <div class="category-content">
-
-              <h4>
-
-                <a href="{% url 'ride_detail' ride.slug %}">
-                  {{ ride.name }}
-                </a>
-
-              </h4>
-
-
-              {% if ride.active_prices %}
-
-                <span>
-                  From ₹{{ ride.active_prices.0.price }}
-                </span>
-
-              {% else %}
-
-                <span>
-                  {{ ride.duration }}
-                </span>
-
-              {% endif %}
-
-            </div>
-
-          </div>
-
-        </div>
-
-      {% empty %}
-
-        <div class="col-12">
-
-          <div class="text-center">
-
-            <p>
-              No featured rides available.
-            </p>
-
-          </div>
-
-        </div>
-
-      {% endfor %}
-
-    </div>
-
-  </div>
-
-</div> {% endcomment %}
 
 <!-- featured rides -->
-<div class="tour-guide py-120">
+{% comment %} <div class="tour-guide py-120">
 
   <div class="container">
 
@@ -573,7 +453,425 @@
 
   </div>
 
+</div> {% endcomment %}
+
+
+{% comment %} <section class="ride-showcase-section pt-120 pb-100">
+  <div class="container">
+
+    <div class="row">
+      <div class="col-lg-7 mx-auto">
+        <div class="site-heading text-center wow fadeInUp">
+          <span class="site-title-tagline">
+            <i class="far fa-person-hiking"></i>
+            Our Adventures
+          </span>
+
+          <h2 class="site-title">
+            Choose Your Next
+            <span>Flying Fox Adventure</span>
+          </h2>
+
+          <p>
+            Watch the experience, explore each ride and choose the perfect
+            adventure for your visit to Munnar.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div
+  class="ride-video-slider owl-carousel owl-theme wow fadeInUp"
+  data-wow-delay=".3s"
+>
+
+  {% for ride in rides %}
+
+    {% with ride_video=ride.uploaded_videos.0 %}
+
+      <div class="ride-video-item">
+        <article class="ride-video-card">
+
+          <div class="ride-video-media">
+
+            {% if ride_video %}
+
+              <video
+                class="ride-card-video"
+                preload="metadata"
+                playsinline
+              >
+                <source
+                  src="{{ ride_video.video.url }}"
+                  type="video/mp4"
+                >
+
+                Your browser does not support HTML video.
+              </video>
+
+              <div class="ride-video-overlay"></div>
+
+              <button
+                type="button"
+                class="ride-play-button"
+                aria-label="Play {{ ride.name }} video"
+              >
+                <i class="fas fa-play"></i>
+              </button>
+
+            {% else %}
+
+              <div class="ride-no-video">
+                <i class="fas fa-video-slash"></i>
+                <span>Video coming soon</span>
+              </div>
+
+            {% endif %}
+
+            <span class="ride-level-badge">
+              <i class="far fa-bolt"></i>
+              Flying Fox
+            </span>
+
+            <div class="ride-card-content">
+
+              <span class="ride-card-location">
+                <i class="far fa-location-dot"></i>
+                Munnar, Kerala
+              </span>
+
+              <h3>
+                <a href="#">
+                  {{ ride.name }}
+                </a>
+              </h3>
+
+              <div class="ride-card-info">
+                <span>
+                  <i class="far fa-clock"></i>
+                  {{ ride.duration }}
+                </span>
+              </div>
+
+              <a href="#" class="ride-details-link">
+                Explore Ride
+                <i class="fas fa-arrow-right"></i>
+              </a>
+
+            </div>
+
+          </div>
+        </article>
+      </div>
+
+    {% endwith %}
+
+  {% empty %}
+
+    <div class="text-center">
+      <p>No active rides are available.</p>
+    </div>
+
+  {% endfor %}
+
 </div>
+  </div>
+</section> {% endcomment %}
+
+
+
+
+<section class="ride-showcase-section pt-120 pb-40">
+
+    <div class="container">
+
+
+        <!-- =================================================
+             SECTION HEADING
+        ================================================== -->
+
+        <div class="row">
+
+            <div class="col-lg-7 mx-auto">
+
+                <div
+                    class="site-heading text-center wow fadeInUp"
+                    data-wow-delay=".2s"
+                >
+
+                    <span class="site-title-tagline">
+
+                        <i class="far fa-bolt"></i>
+
+                        Featured Rides
+
+                    </span>
+
+
+                    <h2 class="site-title">
+
+                        Experience Our
+
+                        <span>
+                            Featured Adventures
+                        </span>
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             FEATURED RIDE VIDEO SLIDER
+        ================================================== -->
+
+        <div
+            class="ride-video-slider owl-carousel owl-theme wow fadeInUp"
+            data-wow-delay=".3s"
+        >
+
+
+            {% for ride in featured_rides %}
+
+
+                {% with ride_video=ride.featured_videos.0 %}
+
+
+                    <div class="ride-video-item">
+
+
+                        <article class="ride-video-card">
+
+
+                            <div class="ride-video-media">
+
+
+                                <!-- =====================================
+                                     FEATURED RIDE VIDEO
+                                ====================================== -->
+
+                                {% if ride_video %}
+
+
+                                    <video
+                                        class="ride-card-video"
+                                        preload="metadata"
+                                        playsinline
+                                        muted
+                                    >
+
+                                        <source
+                                            src="{{ ride_video.video.url }}"
+                                            type="video/mp4"
+                                        >
+
+                                        Your browser does not support HTML video.
+
+                                    </video>
+
+
+                                    <!-- Dark overlay -->
+
+                                    <div class="ride-video-overlay"></div>
+
+
+
+                                    <!-- Play Button -->
+
+                                    <button
+                                        type="button"
+                                        class="ride-play-button"
+                                        aria-label="Play {{ ride.name }} video"
+                                    >
+
+                                        <i class="fas fa-play"></i>
+
+                                    </button>
+
+
+                                {% else %}
+
+
+                                    <!-- =================================
+                                         VIDEO NOT AVAILABLE
+                                    ================================== -->
+
+                                    <div class="ride-no-video">
+
+
+                                        {% if ride.featured_images.0 %}
+
+                                            <img
+                                                src="{{ ride.featured_images.0.image.url }}"
+                                                alt="{{ ride.name }}"
+                                                class="ride-video-fallback-image"
+                                            >
+
+                                        {% else %}
+
+                                            <i class="fas fa-video-slash"></i>
+
+                                            <span>
+                                                Video coming soon
+                                            </span>
+
+                                        {% endif %}
+
+
+                                    </div>
+
+
+                                {% endif %}
+
+
+
+                                <!-- =====================================
+                                     FEATURED BADGE
+                                ====================================== -->
+
+                                <span class="ride-level-badge">
+
+                                    <i class="fas fa-star"></i>
+
+                                    Featured Ride
+
+                                </span>
+
+
+
+                                <!-- =====================================
+                                     CARD CONTENT
+                                ====================================== -->
+
+                                <div class="ride-card-content">
+
+
+                                    <span class="ride-card-location">
+
+                                        <i class="far fa-location-dot"></i>
+
+                                        Munnar, Kerala
+
+                                    </span>
+
+
+
+                                    <h3>
+
+                                        <a
+                                            href="{% url 'ride_detail' ride.slug %}"
+                                        >
+
+                                            {{ ride.name }}
+
+                                        </a>
+
+                                    </h3>
+
+
+
+                                    <!-- =================================
+                                         RIDE INFORMATION
+                                    ================================== -->
+
+                                    <div class="ride-card-info">
+
+
+                                        {% if ride.duration %}
+
+                                            <span>
+
+                                                <i class="far fa-clock"></i>
+
+                                                {{ ride.duration }}
+
+                                            </span>
+
+                                        {% endif %}
+
+
+
+                                        {% if ride.featured_prices %}
+
+                                            <span>
+
+                                                <i class="far fa-indian-rupee-sign"></i>
+
+                                                From ₹{{ ride.featured_prices.0.price }}
+
+                                            </span>
+
+                                        {% endif %}
+
+
+                                    </div>
+
+
+
+                                    <!-- =================================
+                                         VIEW RIDE
+                                    ================================== -->
+
+                                    <a
+                                        href="{% url 'ride_detail' ride.slug %}"
+                                        class="ride-details-link"
+                                    >
+
+                                        Explore Ride
+
+                                        <i class="fas fa-arrow-right"></i>
+
+                                    </a>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </article>
+
+
+                    </div>
+
+
+                {% endwith %}
+
+
+            {% empty %}
+
+
+                <div class="ride-empty-featured text-center">
+
+                    <i class="far fa-bolt"></i>
+
+                    <h4>
+                        Featured rides coming soon
+                    </h4>
+
+                    <p>
+                        Check back soon for our featured Flying Fox adventures.
+                    </p>
+
+                </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
 <!-- featured rides end -->
 <!-- featured rides end -->
 
@@ -801,9 +1099,7 @@
 </section> {% endcomment %}
 
 
-
-
-<section class="ff-superman-stack-section">
+{% comment %} <section class="ff-superman-stack-section">
 
     <div class="ff-superman-stack">
 
@@ -1187,6 +1483,345 @@
 
     </div>
 
+</section> {% endcomment %}
+
+
+
+
+
+<!-- =========================================================
+     SUPERMAN ZIPLINE FEATURE SECTION
+========================================================= -->
+
+<section class="ff-superman-feature-section">
+
+    <div class="container">
+
+
+        <!-- =====================================================
+             SECTION HEADING
+        ====================================================== -->
+
+        <div class="ff-superman-feature-heading text-center wow fadeInUp">
+
+            <span class="ff-superman-feature-tag">
+                <i class="fas fa-bolt"></i>
+                Featured Adventure
+            </span>
+
+            <h2>
+                Experience The
+                <span>Superman Zipline</span>
+            </h2>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             ROW 01
+             IMAGE LEFT / CONTENT RIGHT
+        ====================================================== -->
+
+        <div class="ff-superman-feature-row">
+
+            <div class="ff-superman-feature-image wow fadeInLeft">
+
+                <img
+                    src="{% static 'frontend/assets/img/superman/img-1.jpg' %}"
+                    alt="Superman Zipline Flying Fox Adventure Munnar"
+                >
+
+                <span class="ff-superman-image-badge">
+                    <i class="fas fa-star"></i>
+                    Featured Activity
+                </span>
+
+            </div>
+
+
+
+            <div class="ff-superman-feature-content wow fadeInRight">
+
+                <span class="ff-superman-small-label">
+                    Fly Like Superman
+                </span>
+
+                <h3>
+                    Munnar's Thrilling
+                    <span>1.5 KM Superman Zipline</span>
+                </h3>
+
+                <p>
+                    Experience an exciting 1.5 KM river-crossing zipline
+                    in a Superman-style lying and horizontal position,
+                    offering a more thrilling Flying Fox adventure experience.
+                </p>
+
+
+                <div class="ff-superman-info-grid">
+
+                    <div class="ff-superman-info-item">
+                        <i class="fas fa-route"></i>
+
+                        <div>
+                            <small>Distance</small>
+                            <strong>1.5 KM</strong>
+                        </div>
+                    </div>
+
+
+                    <div class="ff-superman-info-item">
+                        <i class="fas fa-stopwatch"></i>
+
+                        <div>
+                            <small>Ride Time</small>
+                            <strong>120 Seconds</strong>
+                        </div>
+                    </div>
+
+
+                    <div class="ff-superman-info-item">
+                        <i class="fas fa-indian-rupee-sign"></i>
+
+                        <div>
+                            <small>Price</small>
+                            <strong>₹2,400 / Person</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="{% url 'bookings' %}"
+                    class="ff-superman-feature-btn"
+                >
+                    Book Superman Zipline
+
+                    <span>
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             ROW 02
+             CONTENT LEFT / IMAGE RIGHT
+        ====================================================== -->
+
+        <div class="ff-superman-feature-row ff-superman-feature-row-reverse">
+
+
+            <div class="ff-superman-feature-content wow fadeInLeft">
+
+                <span class="ff-superman-small-label">
+                    Ride Information
+                </span>
+
+                <h3>
+                    Adventure Available
+                    <span>Every Day</span>
+                </h3>
+
+                <p>
+                    Enjoy the Superman Zipline throughout the week.
+                    The attraction operates from morning until evening,
+                    making it easy to include this signature Flying Fox
+                    adventure in your Munnar visit.
+                </p>
+
+
+                <div class="ff-superman-info-grid">
+
+                    <div class="ff-superman-info-item">
+                        <i class="fas fa-clock"></i>
+
+                        <div>
+                            <small>Timings</small>
+                            <strong>8:30 AM – 6:00 PM</strong>
+                        </div>
+                    </div>
+
+
+                    <div class="ff-superman-info-item">
+                        <i class="fas fa-calendar-check"></i>
+
+                        <div>
+                            <small>Operating Days</small>
+                            <strong>Monday – Sunday</strong>
+                        </div>
+                    </div>
+
+
+                    <div class="ff-superman-info-item">
+                        <i class="fas fa-weight-scale"></i>
+
+                        <div>
+                            <small>Weight Limit</small>
+                            <strong>30 – 120 KG</strong>
+                        </div>
+                    </div>
+
+
+                    <div class="ff-superman-info-item">
+                        <i class="fas fa-users"></i>
+
+                        <div>
+                            <small>Age Limit</small>
+                            <strong>No Age Limit</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="{% url 'bookings' %}"
+                    class="ff-superman-feature-btn"
+                >
+                    Reserve Your Ride
+
+                    <span>
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+
+            </div>
+
+
+
+            <div class="ff-superman-feature-image wow fadeInRight">
+
+                <img
+                    src="{% static 'frontend/assets/img/superman/img-2.jpg' %}"
+                    alt="Superman Zipline Munnar"
+                >
+
+                <span class="ff-superman-image-badge">
+                    <i class="fas fa-calendar"></i>
+                    Open 7 Days
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             ROW 03
+             IMAGE LEFT / CONTENT RIGHT
+        ====================================================== -->
+
+        <div class="ff-superman-feature-row">
+
+            <div class="ff-superman-feature-image wow fadeInLeft">
+
+                <img
+                    src="{% static 'frontend/assets/img/superman/img-3.jpg' %}"
+                    alt="Superman Zipline Photography and Videography"
+                >
+
+                <span class="ff-superman-image-badge">
+                    <i class="fas fa-camera"></i>
+                    Included Free
+                </span>
+
+            </div>
+
+
+
+            <div class="ff-superman-feature-content wow fadeInRight">
+
+                <span class="ff-superman-small-label">
+                    Memories Included
+                </span>
+
+                <h3>
+                    Your Superman Flight
+                    <span>Captured Free</span>
+                </h3>
+
+                <p>
+                    Photography and videography are available free of
+                    charge with your Superman Zipline experience, allowing
+                    you to relive every exciting second of your adventure.
+                </p>
+
+
+                <div class="ff-superman-media-features">
+
+                    <div class="ff-superman-media-feature">
+
+                        <span>
+                            <i class="fas fa-camera"></i>
+                        </span>
+
+                        <div>
+                            <small>Complimentary</small>
+                            <strong>Free Photography</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="ff-superman-media-feature">
+
+                        <span>
+                            <i class="fas fa-video"></i>
+                        </span>
+
+                        <div>
+                            <small>Complimentary</small>
+                            <strong>Free Videography</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="ff-superman-price-box">
+
+                    <div>
+                        <small>Superman Zipline</small>
+                        <span>Premium Adventure Experience</span>
+                    </div>
+
+                    <strong>
+                        ₹2,400
+                        <small>/ person</small>
+                    </strong>
+
+                </div>
+
+
+
+                <a
+                    href="{% url 'bookings' %}"
+                    class="ff-superman-feature-btn"
+                >
+                    Book Your Adventure
+
+                    <span>
+                        <i class="fas fa-arrow-right"></i>
+                    </span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
 </section>
 
 
@@ -1331,11 +1966,11 @@
 <div class="tour-area bg-2 pt-90 pb-100">
 
     <div class="shape-1">
-
+{% comment %} 
         <img
             src="{% static 'frontend/assets/img/shape/02.webp' %}"
             alt=""
-        />
+        /> {% endcomment %}
 
     </div>
 
@@ -1756,297 +2391,9 @@
 <!-- rides area end -->
 {% comment %} rides end  {% endcomment %}
 
-      <!-- safety section -->
-      <section class="safety-first-section py-120">
-        <div class="container">
 
-          <div class="row">
-            <div class="col-lg-8 mx-auto">
-              <div
-                class="site-heading text-center safety-heading wow fadeInUp"
-                data-wow-delay=".2s"
-              >
-                <span class="site-title-tagline">
-                  <i class="far fa-shield-check"></i>
-                  Safety First
-                </span>
 
-                <h2 class="site-title">
-                  Your Safety,
-                  <span>Our Promise</span>
-                </h2>
-
-                <p>
-                  We use internationally certified equipment and follow strict
-                  safety procedures to provide a secure and unforgettable Flying
-                  Fox adventure.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="safety-equipment-slider owl-carousel owl-theme wow fadeInUp"
-            data-wow-delay=".3s"
-          >
-
-            <div class="safety-equipment-item">
-              <article class="safety-equipment-card">
-                <div class="safety-equipment-image">
-                  <img
-                    src="{% static 'frontend/assets/img/safety/safety-helmet.png' %}"
-                    alt="Flying Fox safety helmet"
-                  >
-                </div>
-
-                <span class="safety-card-arrow">
-                  <i class="fas fa-arrow-up-right"></i>
-                </span>
-
-                <div class="safety-equipment-content">
-                  <h3>Safety Helmet</h3>
-
-                  <p>
-                    High-impact certified helmets designed to provide maximum
-                    head protection during every ride.
-                  </p>
-                </div>
-              </article>
-            </div>
-
-            <div class="safety-equipment-item">
-              <article class="safety-equipment-card">
-                <div class="safety-equipment-image">
-                  <img
-                    src="{% static 'frontend/assets/img/safety/harness.png' %}"
-                    alt="Full body safety harness"
-                  >
-                </div>
-
-                <span class="safety-card-arrow">
-                  <i class="fas fa-arrow-up-right"></i>
-                </span>
-
-                <div class="safety-equipment-content">
-                  <h3>Full Body Harness</h3>
-
-                  <p>
-                    A secure and comfortable harness with adjustable straps for a
-                    safe and perfect fit.
-                  </p>
-                </div>
-              </article>
-            </div>
-
-            <div class="safety-equipment-item">
-              <article class="safety-equipment-card">
-                <div class="safety-equipment-image">
-                  <img
-                    src="{% static 'frontend/assets/img/safety/trolley.png' %}"
-                    alt="Professional zipline trolley"
-                  >
-                </div>
-
-                <span class="safety-card-arrow">
-                  <i class="fas fa-arrow-up-right"></i>
-                </span>
-
-                <div class="safety-equipment-content">
-                  <h3>Zipline Trolley</h3>
-
-                  <p>
-                    A premium-quality trolley engineered for smooth, stable and
-                    controlled movement along the cable.
-                  </p>
-                </div>
-              </article>
-            </div>
-
-            <div class="safety-equipment-item">
-              <article class="safety-equipment-card">
-                <div class="safety-equipment-image">
-                  <img
-                    src="{% static 'frontend/assets/img/safety/carabiners.png' %}"
-                    alt="Double locking safety carabiners"
-                  >
-                </div>
-
-                <span class="safety-card-arrow">
-                  <i class="fas fa-arrow-up-right"></i>
-                </span>
-
-                <div class="safety-equipment-content">
-                  <h3>Safety Carabiners</h3>
-
-                  <p>
-                    Strong double-locking carabiners provide a secure connection
-                    between the rider, harness and trolley.
-                  </p>
-                </div>
-              </article>
-            </div>
-
-            <div class="safety-equipment-item">
-              <article class="safety-equipment-card">
-                <div class="safety-equipment-image">
-                  <img
-                    src="{% static 'frontend/assets/img/safety/gloves.png' %}"
-                    alt="Protective adventure gloves"
-                  >
-                </div>
-
-                <span class="safety-card-arrow">
-                  <i class="fas fa-arrow-up-right"></i>
-                </span>
-
-                <div class="safety-equipment-content">
-                  <h3>Protective Gloves</h3>
-
-                  <p>
-                    Strong-grip gloves improve hand protection, comfort and
-                    control throughout the adventure.
-                  </p>
-                </div>
-              </article>
-            </div>
-
-            <div class="safety-equipment-item">
-              <article class="safety-equipment-card">
-                <div class="safety-equipment-image">
-                  <img
-                    src="{% static 'frontend/assets/img/safety/lanyard.png' %}"
-                    alt="Zipline safety lanyard"
-                  >
-                </div>
-
-                <span class="safety-card-arrow">
-                  <i class="fas fa-arrow-up-right"></i>
-                </span>
-
-                <div class="safety-equipment-content">
-                  <h3>Safety Lanyard</h3>
-
-                  <p>
-                    A durable shock-absorbing lanyard helps reduce sudden impact
-                    while maintaining a secure connection.
-                  </p>
-                </div>
-              </article>
-            </div>
-
-          </div>
-
-          <div
-            class="safety-feature-panel wow fadeInUp"
-            data-wow-delay=".4s"
-          >
-            <div class="row g-0">
-
-              <div class="col-md-6 col-lg-4 col-xl-2">
-                <div class="safety-feature-item">
-                  <div class="safety-feature-icon">
-                    <i class="far fa-shield-check"></i>
-                  </div>
-
-                  <h4>Certified Equipment</h4>
-
-                  <p>
-                    Internationally certified and regularly maintained safety
-                    gear.
-                  </p>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 col-xl-2">
-                <div class="safety-feature-item">
-                  <div class="safety-feature-icon">
-                    <i class="far fa-clipboard-check"></i>
-                  </div>
-
-                  <h4>Pre-Ride Inspection</h4>
-
-                  <p>
-                    Every piece of equipment is checked carefully before each
-                    ride.
-                  </p>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 col-xl-2">
-                <div class="safety-feature-item">
-                  <div class="safety-feature-icon">
-                    <i class="far fa-user-helmet-safety"></i>
-                  </div>
-
-                  <h4>Trained Guides</h4>
-
-                  <p>
-                    Every ride is managed by trained and experienced adventure
-                    professionals.
-                  </p>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 col-xl-2">
-                <div class="safety-feature-item">
-                  <div class="safety-feature-icon">
-                    <i class="far fa-link"></i>
-                  </div>
-
-                  <h4>Double-Lock System</h4>
-
-                  <p>
-                    Advanced dual-lock connections offer additional security.
-                  </p>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 col-xl-2">
-                <div class="safety-feature-item">
-                  <div class="safety-feature-icon">
-                    <i class="far fa-cloud-sun-rain"></i>
-                  </div>
-
-                  <h4>Weather Monitoring</h4>
-
-                  <p>
-                    Rides operate only when weather conditions are safe.
-                  </p>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 col-xl-2">
-                <div class="safety-feature-item">
-                  <div class="safety-feature-icon">
-                    <i class="far fa-kit-medical"></i>
-                  </div>
-
-                  <h4>Emergency Response</h4>
-
-                  <p>
-                    First-aid support and emergency procedures are always ready.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="safety-bottom-message wow fadeInUp" data-wow-delay=".5s">
-            <i class="fas fa-shield-check"></i>
-
-            <p>
-              Your adventure is our responsibility. Experience every thrill with
-              <strong>complete peace of mind.</strong>
-            </p>
-          </div>
-
-        </div>
-      </section>
-      <!-- safety section end -->
-
-      <!-- latest offers section -->
-       {% comment %} <section class="adventure-offers-section">
+      {% comment %} <section class="adventure-offers-section">
         <div class="offer-cable offer-cable-one"></div>
         <div class="offer-cable offer-cable-two"></div>
 
@@ -2339,7 +2686,7 @@ FLYING FOX DYNAMIC OFFERS SECTION
                  LEFT SIDE
             ================================================== -->
 
-            <div class="col-lg-4">
+            <div class="col-lg-4 ff-offers-left-column">
 
                 <div class="ff-offers-rider-wrap">
 
@@ -2592,132 +2939,891 @@ FLYING FOX DYNAMIC OFFERS SECTION
 
       <!-- latest offers section end -->
 
-       <!-- tour guide -->
-      {% comment %} <div class="tour-guide py-120">
+
+
+
+
+      <!-- safety section -->
+      {% comment %} <section class="safety-first-section py-120">
         <div class="container">
+
           <div class="row">
-            <div class="col-lg-7 mx-auto">
-              <div class="site-heading text-center wow fadeInUp" data-wow-delay=".2s">
-                <span class="site-title-tagline"><i class="far fa-backpack"></i>Tour Guide</span>
-                <h3 class="site-title">Meet Our Safety Crew</h3>
+            <div class="col-lg-8 mx-auto">
+              <div
+                class="site-heading text-center safety-heading wow fadeInUp"
+                data-wow-delay=".2s"
+              >
+                <span class="site-title-tagline">
+                  <i class="far fa-shield-check"></i>
+                  Safety First
+                </span>
+
+                <h2 class="site-title">
+                  Your Safety,
+                  <span>Our Promise</span>
+                </h2>
+
+                <p>
+                  We use internationally certified equipment and follow strict
+                  safety procedures to provide a secure and unforgettable Flying
+                  Fox adventure.
+                </p>
               </div>
             </div>
           </div>
-          <div class="row row-cols-xl-5 g-4">
-            <div class="col-md-6 col-lg-3 col">
-              <div class="guide-item wow fadeInUp" data-wow-delay=".1s">
-                <span class="quide-rate"><i class="fas fa-star"></i>5.0</span>
-                <div class="guide-banner">
-                  <img src="{% static 'frontend/assets/img/tour/b1.webp' %}" alt="thumb" />
-                  <div class="guide-img">
-                    <img src="{% static 'frontend/assets/img/tour/g1.webp' %}" alt="thumb" />
-                  </div>
+
+          <div
+            class="safety-equipment-slider owl-carousel owl-theme wow fadeInUp"
+            data-wow-delay=".3s"
+          >
+
+            <div class="safety-equipment-item">
+              <article class="safety-equipment-card">
+                <div class="safety-equipment-image">
+                  <img
+                    src="{% static 'frontend/assets/img/safety/safety-helmet.png' %}"
+                    alt="Flying Fox safety helmet"
+                  >
                 </div>
-                <div class="guide-content">
-                  <h4><a href="tour-guide-single.html">Ruth Groesbeck</a></h4>
-                  <span>Tourist Guide</span>
-                  <div class="guide-social">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-x-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                  </div>
+
+                <span class="safety-card-arrow">
+                  <i class="fas fa-arrow-up-right"></i>
+                </span>
+
+                <div class="safety-equipment-content">
+                  <h3>Safety Helmet</h3>
+
+                  <p>
+                    High-impact certified helmets designed to provide maximum
+                    head protection during every ride.
+                  </p>
                 </div>
-              </div>
+              </article>
             </div>
-            <div class="col-md-6 col-lg-3 col">
-              <div class="guide-item wow fadeInUp" data-wow-delay=".2s">
-                <span class="quide-rate"><i class="fas fa-star"></i>4.9</span>
-                <div class="guide-banner">
-                  <img src="{% static 'frontend/assets/img/tour/b2.webp' %}" alt="thumb" />
-                  <div class="guide-img">
-                    <img src="{% static 'frontend/assets/img/tour/g2.webp' %}" alt="thumb" />
-                  </div>
+
+            <div class="safety-equipment-item">
+              <article class="safety-equipment-card">
+                <div class="safety-equipment-image">
+                  <img
+                    src="{% static 'frontend/assets/img/safety/harness.png' %}"
+                    alt="Full body safety harness"
+                  >
                 </div>
-                <div class="guide-content">
-                  <h4><a href="tour-guide-single.html">Rodrigues Christy</a></h4>
-                  <span>Tourist Guide</span>
-                  <div class="guide-social">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-x-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                  </div>
+
+                <span class="safety-card-arrow">
+                  <i class="fas fa-arrow-up-right"></i>
+                </span>
+
+                <div class="safety-equipment-content">
+                  <h3>Full Body Harness</h3>
+
+                  <p>
+                    A secure and comfortable harness with adjustable straps for a
+                    safe and perfect fit.
+                  </p>
                 </div>
-              </div>
+              </article>
             </div>
-            <div class="col-md-6 col-lg-3 col">
-              <div class="guide-item wow fadeInUp" data-wow-delay=".3s">
-                <span class="quide-rate"><i class="fas fa-star"></i>5.0</span>
-                <div class="guide-banner">
-                  <img src="{% static 'frontend/assets/img/tour/b3.webp' %}" alt="thumb" />
-                  <div class="guide-img">
-                    <img src="{% static 'frontend/assets/img/tour/g3.webp' %}" alt="thumb" />
-                  </div>
+
+            <div class="safety-equipment-item">
+              <article class="safety-equipment-card">
+                <div class="safety-equipment-image">
+                  <img
+                    src="{% static 'frontend/assets/img/safety/trolley.png' %}"
+                    alt="Professional zipline trolley"
+                  >
                 </div>
-                <div class="guide-content">
-                  <h4><a href="tour-guide-single.html">Dennis Kelly</a></h4>
-                  <span>Tourist Guide</span>
-                  <div class="guide-social">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-x-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                  </div>
+
+                <span class="safety-card-arrow">
+                  <i class="fas fa-arrow-up-right"></i>
+                </span>
+
+                <div class="safety-equipment-content">
+                  <h3>Zipline Trolley</h3>
+
+                  <p>
+                    A premium-quality trolley engineered for smooth, stable and
+                    controlled movement along the cable.
+                  </p>
                 </div>
-              </div>
+              </article>
             </div>
-            <div class="col-md-6 col-lg-3 col">
-              <div class="guide-item wow fadeInUp" data-wow-delay=".4s">
-                <span class="quide-rate"><i class="fas fa-star"></i>4.9</span>
-                <div class="guide-banner">
-                  <img src="{% static 'frontend/assets/img/tour/b4.webp' %}" alt="thumb" />
-                  <div class="guide-img">
-                    <img src="{% static 'frontend/assets/img/tour/g4.webp' %}" alt="thumb" />
-                  </div>
+
+            <div class="safety-equipment-item">
+              <article class="safety-equipment-card">
+                <div class="safety-equipment-image">
+                  <img
+                    src="{% static 'frontend/assets/img/safety/carabiners.png' %}"
+                    alt="Double locking safety carabiners"
+                  >
                 </div>
-                <div class="guide-content">
-                  <h4><a href="tour-guide-single.html">Reyes Carol</a></h4>
-                  <span>Tourist Guide</span>
-                  <div class="guide-social">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-x-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                  </div>
+
+                <span class="safety-card-arrow">
+                  <i class="fas fa-arrow-up-right"></i>
+                </span>
+
+                <div class="safety-equipment-content">
+                  <h3>Safety Carabiners</h3>
+
+                  <p>
+                    Strong double-locking carabiners provide a secure connection
+                    between the rider, harness and trolley.
+                  </p>
                 </div>
-              </div>
+              </article>
             </div>
-            <div class="col-md-6 col-lg-3 col">
-              <div class="guide-item wow fadeInUp" data-wow-delay=".5s">
-                <span class="quide-rate"><i class="fas fa-star"></i>4.9</span>
-                <div class="guide-banner">
-                  <img src="{% static 'frontend/assets/img/tour/b5.webp' %}" alt="thumb" />
-                  <div class="guide-img">
-                    <img src="{% static 'frontend/assets/img/tour/g5.webp' %}" alt="thumb" />
-                  </div>
+
+            <div class="safety-equipment-item">
+              <article class="safety-equipment-card">
+                <div class="safety-equipment-image">
+                  <img
+                    src="{% static 'frontend/assets/img/safety/gloves.png' %}"
+                    alt="Protective adventure gloves"
+                  >
                 </div>
-                <div class="guide-content">
-                  <h4><a href="tour-guide-single.html">Miranda Jackson</a></h4>
-                  <span>Tourist Guide</span>
-                  <div class="guide-social">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-x-twitter"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+
+                <span class="safety-card-arrow">
+                  <i class="fas fa-arrow-up-right"></i>
+                </span>
+
+                <div class="safety-equipment-content">
+                  <h3>Protective Gloves</h3>
+
+                  <p>
+                    Strong-grip gloves improve hand protection, comfort and
+                    control throughout the adventure.
+                  </p>
+                </div>
+              </article>
+            </div>
+
+            <div class="safety-equipment-item">
+              <article class="safety-equipment-card">
+                <div class="safety-equipment-image">
+                  <img
+                    src="{% static 'frontend/assets/img/safety/lanyard.png' %}"
+                    alt="Zipline safety lanyard"
+                  >
+                </div>
+
+                <span class="safety-card-arrow">
+                  <i class="fas fa-arrow-up-right"></i>
+                </span>
+
+                <div class="safety-equipment-content">
+                  <h3>Safety Lanyard</h3>
+
+                  <p>
+                    A durable shock-absorbing lanyard helps reduce sudden impact
+                    while maintaining a secure connection.
+                  </p>
+                </div>
+              </article>
+            </div>
+
+          </div>
+
+          <div
+            class="safety-feature-panel wow fadeInUp"
+            data-wow-delay=".4s"
+          >
+            <div class="row g-0">
+
+              <div class="col-md-6 col-lg-4 col-xl-2">
+                <div class="safety-feature-item">
+                  <div class="safety-feature-icon">
+                    <i class="far fa-shield-check"></i>
                   </div>
+
+                  <h4>Certified Equipment</h4>
+
+                  <p>
+                    Internationally certified and regularly maintained safety
+                    gear.
+                  </p>
                 </div>
               </div>
+
+              <div class="col-md-6 col-lg-4 col-xl-2">
+                <div class="safety-feature-item">
+                  <div class="safety-feature-icon">
+                    <i class="far fa-clipboard-check"></i>
+                  </div>
+
+                  <h4>Pre-Ride Inspection</h4>
+
+                  <p>
+                    Every piece of equipment is checked carefully before each
+                    ride.
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 col-xl-2">
+                <div class="safety-feature-item">
+                  <div class="safety-feature-icon">
+                    <i class="far fa-user-helmet-safety"></i>
+                  </div>
+
+                  <h4>Trained Guides</h4>
+
+                  <p>
+                    Every ride is managed by trained and experienced adventure
+                    professionals.
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 col-xl-2">
+                <div class="safety-feature-item">
+                  <div class="safety-feature-icon">
+                    <i class="far fa-link"></i>
+                  </div>
+
+                  <h4>Double-Lock System</h4>
+
+                  <p>
+                    Advanced dual-lock connections offer additional security.
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 col-xl-2">
+                <div class="safety-feature-item">
+                  <div class="safety-feature-icon">
+                    <i class="far fa-cloud-sun-rain"></i>
+                  </div>
+
+                  <h4>Weather Monitoring</h4>
+
+                  <p>
+                    Rides operate only when weather conditions are safe.
+                  </p>
+                </div>
+              </div>
+
+              <div class="col-md-6 col-lg-4 col-xl-2">
+                <div class="safety-feature-item">
+                  <div class="safety-feature-icon">
+                    <i class="far fa-kit-medical"></i>
+                  </div>
+
+                  <h4>Emergency Response</h4>
+
+                  <p>
+                    First-aid support and emergency procedures are always ready.
+                  </p>
+                </div>
+              </div>
+
             </div>
           </div>
+
+          <div class="safety-bottom-message wow fadeInUp" data-wow-delay=".5s">
+            <i class="fas fa-shield-check"></i>
+
+            <p>
+              Your adventure is our responsibility. Experience every thrill with
+              <strong>complete peace of mind.</strong>
+            </p>
+          </div>
+
         </div>
-      </div> {% endcomment %}
-      <!-- tour guide end -->
+      </section> {% endcomment %}
+
+
+      <!-- =========================================================
+     SAFETY FIRST SECTION
+========================================================= -->
+
+<section class="safety-first-section pt-100">
+
+    <div class="container-fluid">
+
+        <div class="safety-first-wrap">
+
+            <div class="container">
+
+
+                <!-- =========================================
+                     SECTION HEADING
+                ========================================== -->
+
+                <div class="row">
+
+                    <div class="col-lg-8 mx-auto">
+
+                        <div
+                            class="site-heading text-center safety-heading wow fadeInUp"
+                            data-wow-delay=".2s"
+                        >
+
+                            <span class="site-title-tagline">
+
+                                <i class="far fa-shield-check"></i>
+
+                                Safety First
+
+                            </span>
+
+
+                            <h2 class="site-title">
+
+                                Your Safety,
+                                <span>Our Promise</span>
+
+                            </h2>
+
+
+                            <p>
+
+                                We use internationally certified equipment
+                                and follow strict safety procedures to provide
+                                a secure and unforgettable Flying Fox adventure
+                                in Munnar.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     SAFETY EQUIPMENT SLIDER
+                ========================================== -->
+
+                <div
+                    class="safety-equipment-slider owl-carousel owl-theme wow fadeInUp"
+                    data-wow-delay=".3s"
+                >
+
+
+                    <!-- HELMET -->
+
+                    <div class="safety-equipment-item">
+
+                        <article class="safety-equipment-card">
+
+                            <div class="safety-equipment-image">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/safety/safety-helmet.png' %}"
+                                    alt="Flying Fox safety helmet"
+                                >
+
+                            </div>
+
+
+                            <span class="safety-card-arrow">
+
+                                <i class="fas fa-arrow-up-right"></i>
+
+                            </span>
+
+
+                            <div class="safety-equipment-content">
+
+                                <h3>
+                                    Safety Helmet
+                                </h3>
+
+
+                                <p>
+
+                                    High-impact certified helmets designed
+                                    to provide dependable head protection
+                                    throughout every Flying Fox ride.
+
+                                </p>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+
+                    <!-- HARNESS -->
+
+                    <div class="safety-equipment-item">
+
+                        <article class="safety-equipment-card">
+
+                            <div class="safety-equipment-image">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/safety/harness.png' %}"
+                                    alt="Full body safety harness"
+                                >
+
+                            </div>
+
+
+                            <span class="safety-card-arrow">
+
+                                <i class="fas fa-arrow-up-right"></i>
+
+                            </span>
+
+
+                            <div class="safety-equipment-content">
+
+                                <h3>
+                                    Full Body Harness
+                                </h3>
+
+
+                                <p>
+
+                                    Adjustable full-body harnesses help
+                                    provide a secure and comfortable fit
+                                    before every launch.
+
+                                </p>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+
+                    <!-- TROLLEY -->
+
+                    <div class="safety-equipment-item">
+
+                        <article class="safety-equipment-card">
+
+                            <div class="safety-equipment-image">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/safety/trolley.png' %}"
+                                    alt="Professional zipline trolley"
+                                >
+
+                            </div>
+
+
+                            <span class="safety-card-arrow">
+
+                                <i class="fas fa-arrow-up-right"></i>
+
+                            </span>
+
+
+                            <div class="safety-equipment-content">
+
+                                <h3>
+                                    Zipline Trolley
+                                </h3>
+
+
+                                <p>
+
+                                    Professional-grade trolley systems
+                                    provide smooth and controlled travel
+                                    along the Flying Fox cable.
+
+                                </p>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+
+                    <!-- CARABINERS -->
+
+                    <div class="safety-equipment-item">
+
+                        <article class="safety-equipment-card">
+
+                            <div class="safety-equipment-image">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/safety/carabiners.png' %}"
+                                    alt="Double locking safety carabiners"
+                                >
+
+                            </div>
+
+
+                            <span class="safety-card-arrow">
+
+                                <i class="fas fa-arrow-up-right"></i>
+
+                            </span>
+
+
+                            <div class="safety-equipment-content">
+
+                                <h3>
+                                    Safety Carabiners
+                                </h3>
+
+
+                                <p>
+
+                                    Strong locking carabiners securely
+                                    connect the rider, harness and trolley
+                                    during the adventure.
+
+                                </p>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+
+                    <!-- GLOVES -->
+
+                    <div class="safety-equipment-item">
+
+                        <article class="safety-equipment-card">
+
+                            <div class="safety-equipment-image">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/safety/gloves.png' %}"
+                                    alt="Protective adventure gloves"
+                                >
+
+                            </div>
+
+
+                            <span class="safety-card-arrow">
+
+                                <i class="fas fa-arrow-up-right"></i>
+
+                            </span>
+
+
+                            <div class="safety-equipment-content">
+
+                                <h3>
+                                    Protective Gloves
+                                </h3>
+
+
+                                <p>
+
+                                    Strong-grip protective gloves improve
+                                    hand comfort and protection throughout
+                                    the ride.
+
+                                </p>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+
+                    <!-- LANYARD -->
+
+                    <div class="safety-equipment-item">
+
+                        <article class="safety-equipment-card">
+
+                            <div class="safety-equipment-image">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/safety/lanyard.png' %}"
+                                    alt="Zipline safety lanyard"
+                                >
+
+                            </div>
+
+
+                            <span class="safety-card-arrow">
+
+                                <i class="fas fa-arrow-up-right"></i>
+
+                            </span>
+
+
+                            <div class="safety-equipment-content">
+
+                                <h3>
+                                    Safety Lanyard
+                                </h3>
+
+
+                                <p>
+
+                                    Durable safety lanyards maintain
+                                    a secure connection between the rider
+                                    and the primary zipline system.
+
+                                </p>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================================
+                     SAFETY FEATURES
+                ========================================== -->
+
+                <div
+                    class="safety-feature-panel wow fadeInUp"
+                    data-wow-delay=".4s"
+                >
+
+                    <div class="row g-0">
+
+
+                        <!-- 01 -->
+
+                        <div class="col-md-6 col-lg-4 col-xl-2">
+
+                            <div class="safety-feature-item">
+
+                                <div class="safety-feature-icon">
+
+                                    <i class="far fa-shield-check"></i>
+
+                                </div>
+
+
+                                <h4>
+                                    Certified Equipment
+                                </h4>
+
+
+                                <p>
+
+                                    Safety gear is regularly inspected
+                                    and maintained before operation.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- 02 -->
+
+                        <div class="col-md-6 col-lg-4 col-xl-2">
+
+                            <div class="safety-feature-item">
+
+                                <div class="safety-feature-icon">
+
+                                    <i class="far fa-clipboard-check"></i>
+
+                                </div>
+
+
+                                <h4>
+                                    Pre-Ride Inspection
+                                </h4>
+
+
+                                <p>
+
+                                    Equipment and connections are checked
+                                    carefully before every ride.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- 03 -->
+
+                        <div class="col-md-6 col-lg-4 col-xl-2">
+
+                            <div class="safety-feature-item">
+
+                                <div class="safety-feature-icon">
+
+                                    <i class="far fa-user-helmet-safety"></i>
+
+                                </div>
+
+
+                                <h4>
+                                    Trained Guides
+                                </h4>
+
+
+                                <p>
+
+                                    Experienced adventure staff guide
+                                    riders through every stage.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- 04 -->
+
+                        <div class="col-md-6 col-lg-4 col-xl-2">
+
+                            <div class="safety-feature-item">
+
+                                <div class="safety-feature-icon">
+
+                                    <i class="far fa-link"></i>
+
+                                </div>
+
+
+                                <h4>
+                                    Secure Connections
+                                </h4>
+
+
+                                <p>
+
+                                    Multiple secure connection points
+                                    provide additional rider protection.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- 05 -->
+
+                        <div class="col-md-6 col-lg-4 col-xl-2">
+
+                            <div class="safety-feature-item">
+
+                                <div class="safety-feature-icon">
+
+                                    <i class="far fa-cloud-sun-rain"></i>
+
+                                </div>
+
+
+                                <h4>
+                                    Weather Monitoring
+                                </h4>
+
+
+                                <p>
+
+                                    Operations continue only when weather
+                                    conditions are suitable.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- 06 -->
+
+                        <div class="col-md-6 col-lg-4 col-xl-2">
+
+                            <div class="safety-feature-item">
+
+                                <div class="safety-feature-icon">
+
+                                    <i class="far fa-kit-medical"></i>
+
+                                </div>
+
+
+                                <h4>
+                                    Emergency Support
+                                </h4>
+
+
+                                <p>
+
+                                    First-aid and emergency procedures
+                                    are available at the activity location.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     BOTTOM MESSAGE
+                ========================================== -->
+
+                <div
+                    class="safety-bottom-message wow fadeInUp"
+                    data-wow-delay=".5s"
+                >
+
+                    <i class="fas fa-shield-check"></i>
+
+
+                    <p>
+
+                        Your adventure is our responsibility.
+                        Enjoy the thrill of Flying Fox Adventure with
+                        <strong>confidence and peace of mind.</strong>
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+      <!-- safety section end -->
+
+
+ 
+
 
 
 
       <!-- how it works section -->
-      <section class="how-it-works-section py-120">
+      {% comment %} <section class="how-it-works-section py-120">
 
         <div class="hiw-decoration hiw-decoration-one"></div>
         <div class="hiw-decoration hiw-decoration-two"></div>
@@ -2990,7 +4096,7 @@ FLYING FOX DYNAMIC OFFERS SECTION
           </div>
 
         </div>
-      </section>
+      </section> {% endcomment %}
       <!-- how it works section end -->
 
       <!-- plan adventure section -->
@@ -4745,79 +5851,74 @@ FLYING FOX DYNAMIC OFFERS SECTION
                  RIGHT IMAGE
             ====================================================== -->
 
-            <div class="col-lg-6">
+ <div class="col-lg-6 ff-safety-right-column">
 
-                <div
-                    class="faq-img wow fadeInRight"
-                    data-wow-delay=".2s"
+    <div class="ff-safety-sticky">
+
+        <div class="faq-img">
+
+            <div class="ani-img">
+
+                <img
+                    src="{% static 'frontend/assets/img/faq/01.webp' %}"
+                    alt="Flying Fox Adventure Munnar Safety Instructions"
                 >
 
-                    <div class="ani-img">
+            </div>
 
-                        <img
-                            src="{% static 'frontend/assets/img/faq/01.webp' %}"
-                            alt="Flying Fox Adventure Munnar Safety Instructions"
-                        >
+
+            <!-- SAFETY BADGE -->
+
+            <div class="faq-counter">
+
+                <div class="counter-box">
+
+                    <div class="icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+
+                    <div class="content">
+
+                        <h4 class="title">
+                            Safety First
+                        </h4>
+
+                        <p>
+                            Follow operator instructions
+                        </p>
 
                     </div>
 
-
-                    <!-- SAFETY BADGE -->
-
-                    <div class="faq-counter">
-
-                        <div class="counter-box">
-
-                            <div class="icon">
-
-                                <i class="fas fa-shield-alt"></i>
-
-                            </div>
+                </div>
 
 
-                            <div class="content">
+                <div class="counter-box">
 
-                                <h4 class="title">
-                                    Safety First
-                                </h4>
+                    <div class="icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
 
-                                <p>
-                                    Follow operator instructions
-                                </p>
+                    <div class="content">
 
-                            </div>
+                        <h4 class="title">
+                            Trained Operators
+                        </h4>
 
-                        </div>
-
-
-                        <div class="counter-box">
-
-                            <div class="icon">
-
-                                <i class="fas fa-user-shield"></i>
-
-                            </div>
-
-
-                            <div class="content">
-
-                                <h4 class="title">
-                                    Trained Operators
-                                </h4>
-
-                                <p>
-                                    Professional ride supervision
-                                </p>
-
-                            </div>
-
-                        </div>
+                        <p>
+                            Professional ride supervision
+                        </p>
 
                     </div>
 
                 </div>
 
             </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
         </div>
@@ -5000,8 +6101,8 @@ FLYING FOX DYNAMIC OFFERS SECTION
           <div class="row">
             <div class="col-lg-7 mx-auto">
               <div class="site-heading sh-2 text-center wow fadeInDown" data-wow-delay=".2s">
-                <span class="site-title-tagline"><i class="far fa-backpack"></i>Tours Video</span>
-                <h3 class="site-title text-white">Experience the sights and sounds of our most iconic tours</h3>
+                <span class="site-title-tagline"><i class="far fa-backpack"></i>Zipline Experience</span>
+                <h3 class="site-title text-white">Experience the Thrill of Flying Above Munnar</h3>
               </div>
             </div>
           </div>
@@ -5022,146 +6123,504 @@ FLYING FOX DYNAMIC OFFERS SECTION
         <div class="container-fluid">
           <div class="section-group-wrap rounded-5 bg-2 pt-90 pb-120">
             <!-- choose area -->
-            <div class="choose-area pb-120">
-              <div class="container">
-                <div class="row g-4 align-items-center">
-                  <div class="col-lg-6">
-                    <div class="choose-content">
-                      <div class="col-12 col-md-8 col-lg-12">
-                        <div class="site-heading mb-0 wow fadeInUp" data-wow-delay=".1s">
-                          <span class="site-title-tagline"><i class="far fa-backpack"></i>Why Choose Us</span>
-                          <h3 class="site-title">Lifelong memories every moment now feels special.</h3>
-                          <p>
-                            It is a long established fact that a reader will be distracted by the readable content of page when looking at
-                            layout many desktop packages and web page editors now.
-                          </p>
-                        </div>
-                      </div>
-                      <div class="choose-content-wrap">
-                        <div class="row g-4">
-                          <div class="col-lg-6">
-                            <div class="choose-item wow fadeInUp" data-wow-delay=".2s">
-                              <span class="count">01</span>
-                              <div class="top">
-                                <div class="icon">
-                                  <img src="{% static 'frontend/assets/img/icon/guide.svg' %}" alt="" />
-                                </div>
-                                <h4>Experts Local Guide</h4>
-                              </div>
-                              <div class="info">
-                                <p>There are many variations of have words look even slightly injected the have suffered humour.</p>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-lg-6">
-                            <div class="choose-item wow fadeInUp" data-wow-delay=".3s">
-                              <span class="count">02</span>
-                              <div class="top">
-                                <div class="icon">
-                                  <img src="{% static 'frontend/assets/img/icon/trip.svg' %}" alt="" />
-                                </div>
-                                <h4>Special Event Trips</h4>
-                              </div>
-                              <div class="info">
-                                <p>There are many variations of have words look even slightly injected the have suffered humour.</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="bottom wow fadeInUp" data-wow-delay=".4s">
-                          <a href="contact.html" class="theme-btn">Book Now<i class="fas fa-arrow-right"></i></a>
-                          <div class="hero-info-wrap">
-                            <div class="hero-avatar-group">
-                              <span class="avatar"><img src="{% static 'frontend/assets/img/account/01.webp' %}" alt="" /></span>
-                              <span class="avatar"><img src="{% static 'frontend/assets/img/account/02.webp' %}" alt="" /></span>
-                              <span class="avatar"><img src="{% static 'frontend/assets/img/account/03.webp' %}" alt="" /></span>
-                              <span class="avatar"><img src="{% static 'frontend/assets/img/account/04.webp' %}" alt="" /></span>
-                              <span class="avatar"><img src="{% static 'frontend/assets/img/account/05.webp' %}" alt="" /></span>
-                              <h4>
-                                <span>25k</span> <br />
-                                Trusted Us
-                              </h4>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="choose-img wow fadeInRight" data-wow-delay=".1s">
-                      <img src="{% static 'frontend/assets/img/choose/01.webp' %}" alt="" />
-                    </div>
-                  </div>
-                </div>
-              </div>
+<div class="choose-area pb-120">
+  <div class="container">
+
+    <div class="row g-4 align-items-center">
+
+      <!-- =========================================
+           LEFT CONTENT
+      ========================================== -->
+      <div class="col-lg-6">
+
+        <div class="choose-content">
+
+          <div class="col-12 col-md-8 col-lg-12">
+
+            <div
+              class="site-heading mb-0 wow fadeInUp"
+              data-wow-delay=".1s"
+            >
+
+              <span class="site-title-tagline">
+
+                <i class="far fa-person-hiking"></i>
+
+                Why Choose Flying Fox
+
+              </span>
+
+
+              <h3 class="site-title">
+
+                Adventure Above The
+                <span>Munnar Hills</span>
+
+              </h3>
+
+
+              <p>
+                Experience the thrill of Flying Fox Adventure in the
+                beautiful hills of Munnar. Glide above green valleys,
+                forests and breathtaking mountain landscapes while
+                enjoying an exciting adventure with professional
+                guidance and safety equipment.
+              </p>
+
             </div>
+
+          </div>
+
+
+
+          <div class="choose-content-wrap">
+
+            <div class="row g-4">
+
+
+              <!-- =========================================
+                   ITEM 01
+              ========================================== -->
+
+              <div class="col-lg-6">
+
+                <div
+                  class="choose-item wow fadeInUp"
+                  data-wow-delay=".2s"
+                >
+
+                  <span class="count">
+                    01
+                  </span>
+
+
+                  <div class="top">
+
+                    <div class="icon">
+
+                      <img
+                        src="{% static 'frontend/assets/img/icon/guide.svg' %}"
+                        alt="Professional Flying Fox Operators"
+                      />
+
+                    </div>
+
+
+                    <h4>
+                      Professional Operators
+                    </h4>
+
+                  </div>
+
+
+                  <div class="info">
+
+                    <p>
+                      Enjoy your adventure with trained operators who
+                      provide proper safety instructions, harness
+                      checks and ride assistance before every launch.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- =========================================
+                   ITEM 02
+              ========================================== -->
+
+              <div class="col-lg-6">
+
+                <div
+                  class="choose-item wow fadeInUp"
+                  data-wow-delay=".3s"
+                >
+
+                  <span class="count">
+                    02
+                  </span>
+
+
+                  <div class="top">
+
+                    <div class="icon">
+
+                      <img
+                        src="{% static 'frontend/assets/img/icon/trip.svg' %}"
+                        alt="Munnar Mountain Views"
+                      />
+
+                    </div>
+
+
+                    <h4>
+                      Spectacular Munnar Views
+                    </h4>
+
+                  </div>
+
+
+                  <div class="info">
+
+                    <p>
+                      Fly through the fresh mountain air and enjoy
+                      unforgettable views of Munnar's green hills,
+                      valleys, forests and mist-covered landscapes.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- =========================================
+                 BOTTOM AREA
+            ========================================== -->
+
+            <div
+              class="bottom wow fadeInUp"
+              data-wow-delay=".4s"
+            >
+
+              <a
+                href="{% url 'bookings' %}"
+                class="theme-btn"
+              >
+
+                Book Your Adventure
+
+                <i class="fas fa-arrow-right"></i>
+
+              </a>
+
+
+
+              <div class="hero-info-wrap">
+
+                <div class="hero-avatar-group">
+
+                  <span class="avatar">
+
+                    <img
+                      src="{% static 'frontend/assets/img/icon/icon-google.svg' %}"
+                      alt="Flying Fox Guest"
+                    />
+
+                  </span>
+
+                  <h4>
+
+                    <span>
+                      25k+
+                    </span>
+
+                    <br>
+
+                    Adventures
+
+                  </h4>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- =========================================
+           RIGHT IMAGE
+      ========================================== -->
+
+      <div class="col-lg-6">
+
+        <div
+          class="choose-img wow fadeInRight"
+          data-wow-delay=".1s"
+        >
+
+          <img
+            src="{% static 'frontend/assets/img/home/img-5.jpg' %}"
+            alt="Flying Fox Zipline Adventure in Munnar"
+          />
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
             <!-- choose area end -->
 
             <!-- process area -->
-            <div class="process-area">
-              <div class="container">
-                <div class="process-wrap">
-                  <div class="shape">
-                    <img src="{% static 'frontend/assets/img/shape/18.webp' %}" alt="" />
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-6 mx-auto">
-                      <div class="site-heading text-center wow fadeInUp" data-wow-delay=".2s">
-                        <span class="site-title-tagline"><i class="far fa-backpack"></i>Working Process</span>
-                        <h3 class="site-title">Book your next step in three easy steps</h3>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row g-4">
-                    <div class="col-md-6 col-xl-4">
-                      <div class="process-item wow fadeInUp" data-wow-delay=".2s">
-                        <span class="count">01</span>
-                        <div class="img">
-                          <img src="{% static 'frontend/assets/img/step/01.webp' %}" alt="" />
-                          <div class="icon">
-                            <img src="{% static 'frontend/assets/img/icon/user-roadmap.svg' %}" alt="" />
-                          </div>
-                        </div>
-                        <div class="content">
-                          <h4>Choose Your Destination</h4>
-                          <p>It is long established fact the readable content of page majority words passage suffered.</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6 col-xl-4">
-                      <div class="process-item wow fadeInUp" data-wow-delay=".4s">
-                        <span class="count">02</span>
-                        <div class="img">
-                          <img src="{% static 'frontend/assets/img/step/02.webp' %}" alt="" />
-                          <div class="icon">
-                            <img src="{% static 'frontend/assets/img/icon/booking.svg' %}" alt="" />
-                          </div>
-                        </div>
-                        <div class="content">
-                          <h4>Book Trip Easily Online</h4>
-                          <p>It is long established fact the readable content of page majority words passage suffered.</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6 col-xl-4">
-                      <div class="process-item wow fadeInUp" data-wow-delay=".6s">
-                        <span class="count">03</span>
-                        <div class="img">
-                          <img src="{% static 'frontend/assets/img/step/03.webp' %}" alt="" />
-                          <div class="icon">
-                            <img src="{% static 'frontend/assets/img/icon/plane-globe.svg' %}" alt="" />
-                          </div>
-                        </div>
-                        <div class="content">
-                          <h4>Travel On Selected Date</h4>
-                          <p>It is long established fact the readable content of page majority words passage suffered.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<div class="process-area">
+
+    <div class="container">
+
+        <div class="process-wrap">
+
+
+            <!-- =========================================
+                 ZIPLINE PATTERN
+            ========================================== -->
+
+            <div class="shape">
+
+                <img
+                    src="{% static 'frontend/assets/img/home/img-6.png' %}"
+                    class="ff-process-zipline-shape"
+                    alt="Flying Fox Zipline Adventure Process"
+                />
+
             </div>
+
+
+
+            <!-- =========================================
+                 SECTION HEADING
+            ========================================== -->
+
+            <div class="row">
+
+                <div class="col-lg-6 mx-auto">
+
+                    <div
+                        class="site-heading text-center wow fadeInUp"
+                        data-wow-delay=".2s"
+                    >
+
+                        <span class="site-title-tagline">
+
+                            <i class="far fa-backpack"></i>
+
+                            Your Adventure Journey
+
+                        </span>
+
+
+                        <h3 class="site-title">
+
+                            Start Your Flying Fox Adventure
+                            In Three Easy Steps
+
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =========================================
+                 PROCESS STEPS
+            ========================================== -->
+
+            <div class="row g-4">
+
+
+                <!-- =====================================
+                     STEP 01
+                ====================================== -->
+
+                <div class="col-md-6 col-xl-4">
+
+                    <div
+                        class="process-item wow fadeInUp"
+                        data-wow-delay=".2s"
+                    >
+
+                        <span class="count">
+                            01
+                        </span>
+
+
+                        <div class="img">
+
+                            <img
+                                src="{% static 'frontend/assets/img/step/01.webp' %}"
+                                alt="Choose Flying Fox Ride"
+                            />
+
+
+                            <div class="icon">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/icon/user-roadmap.svg' %}"
+                                    alt="Choose Ride"
+                                />
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="content">
+
+                            <h4>
+                                Choose Your Ride
+                            </h4>
+
+
+                            <p>
+
+                                Explore our Flying Fox adventures and choose
+                                the ride that matches your preferred thrill,
+                                duration and experience in Munnar.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =====================================
+                     STEP 02
+                ====================================== -->
+
+                <div class="col-md-6 col-xl-4">
+
+                    <div
+                        class="process-item wow fadeInUp"
+                        data-wow-delay=".4s"
+                    >
+
+                        <span class="count">
+                            02
+                        </span>
+
+
+                        <div class="img">
+
+                            <img
+                                src="{% static 'frontend/assets/img/step/02.webp' %}"
+                                alt="Book Flying Fox Adventure"
+                            />
+
+
+                            <div class="icon">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/icon/booking.svg' %}"
+                                    alt="Online Booking"
+                                />
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="content">
+
+                            <h4>
+                                Book Your Adventure
+                            </h4>
+
+
+                            <p>
+
+                                Select your preferred date and ride,
+                                enter the participant details and complete
+                                your booking securely online.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =====================================
+                     STEP 03
+                ====================================== -->
+
+                <div class="col-md-6 col-xl-4">
+
+                    <div
+                        class="process-item wow fadeInUp"
+                        data-wow-delay=".6s"
+                    >
+
+                        <span class="count">
+                            03
+                        </span>
+
+
+                        <div class="img">
+
+                            <img
+                                src="{% static 'frontend/assets/img/step/03.webp' %}"
+                                alt="Flying Fox Zipline Experience"
+                            />
+
+
+                            <div class="icon">
+
+                                <img
+                                    src="{% static 'frontend/assets/img/icon/plane-globe.svg' %}"
+                                    alt="Start Adventure"
+                                />
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="content">
+
+                            <h4>
+                                Arrive, Gear Up & Fly
+                            </h4>
+
+
+                            <p>
+
+                                Arrive at Flying Fox Adventure Munnar,
+                                complete the safety briefing, gear up with
+                                your harness and get ready to fly above
+                                the beautiful hills and valleys.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
             <!-- process area end -->
           </div>
         </div>

@@ -1119,7 +1119,15 @@ class ChatbotRule(models.Model):
 
 class ChatSession(models.Model):
 
+    LANGUAGE_CHOICES = [
+        ("en", "English"),
+        ("ml", "Malayalam"),
+        ("hi", "Hindi"),
+        ("ta", "Tamil"),
+    ]
+
     ONBOARDING_CHOICES = [
+        ("language", "Waiting For Language"),
         ("name", "Waiting For Name"),
         ("phone", "Waiting For Phone"),
         ("email", "Waiting For Email"),
@@ -1136,6 +1144,16 @@ class ChatSession(models.Model):
         max_length=100,
         blank=True,
         db_index=True,
+    )
+
+    # -----------------------------------------
+    # LANGUAGE
+    # -----------------------------------------
+
+    language = models.CharField(
+        max_length=10,
+        choices=LANGUAGE_CHOICES,
+        default="en",
     )
 
     customer_name = models.CharField(
@@ -1155,25 +1173,26 @@ class ChatSession(models.Model):
     onboarding_step = models.CharField(
         max_length=20,
         choices=ONBOARDING_CHOICES,
-        default="name",
+        default="language",
     )
 
     is_closed = models.BooleanField(
-        default=False
+        default=False,
     )
 
     started_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
     )
 
     class Meta:
         ordering = ["-started_at"]
 
     def __str__(self):
+
         if self.customer_name:
             return (
                 f"{self.customer_name} - "
@@ -1181,6 +1200,9 @@ class ChatSession(models.Model):
             )
 
         return str(self.session_id)
+
+
+    
 class ChatMessage(models.Model):
 
     SENDER_CHOICES = [
@@ -1189,23 +1211,42 @@ class ChatMessage(models.Model):
         ("admin", "Admin"),
     ]
 
+
     session = models.ForeignKey(
         ChatSession,
         on_delete=models.CASCADE,
         related_name="messages",
     )
 
+
     sender = models.CharField(
         max_length=10,
         choices=SENDER_CHOICES,
     )
 
+
+    # What user actually typed
     message = models.TextField()
+
+
+    # English version used internally
+    translated_message = models.TextField(
+        blank=True,
+    )
+
+
+    # en / ml / hi / ta
+    language = models.CharField(
+        max_length=10,
+        blank=True,
+    )
+
 
     intent = models.CharField(
         max_length=100,
         blank=True,
     )
+
 
     matched_rule = models.ForeignKey(
         ChatbotRule,
@@ -1215,14 +1256,18 @@ class ChatMessage(models.Model):
         related_name="messages",
     )
 
+
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
+
 
     class Meta:
         ordering = ["created_at"]
 
+
     def __str__(self):
+
         return (
             f"{self.session.session_id} - "
             f"{self.sender}"

@@ -25,7 +25,15 @@ from django.core.validators import validate_email
 
 from datetime import datetime, time
 
+
+from .translation_utils import (
+    translate_to_english,
+    translate_from_english,
+)
+
 import re
+
+import unicodedata
 
 from datetime import date, datetime, timedelta
 from decimal import Decimal, InvalidOperation
@@ -3979,32 +3987,41 @@ def home(request):
 
 
     # -----------------------------------------
-    # FEATURED RIDES
-    # -----------------------------------------
+# FEATURED RIDES
+# -----------------------------------------
 
     featured_rides = (
-        Ride.objects
-        .filter(
-            is_active=True,
-            is_featured=True,
-        )
-        .prefetch_related(
-
-            Prefetch(
-                "media",
-                queryset=image_media,
-                to_attr="featured_images",
-            ),
-
-            Prefetch(
-                "prices",
-                queryset=current_prices,
-                to_attr="featured_prices",
-            ),
-
-        )
-        .order_by("-created_at")
+    Ride.objects
+    .filter(
+        is_active=True,
+        is_featured=True,
     )
+    .prefetch_related(
+
+        # Featured ride videos
+        Prefetch(
+            "media",
+            queryset=video_media,
+            to_attr="featured_videos",
+        ),
+
+        # Featured ride images
+        Prefetch(
+            "media",
+            queryset=image_media,
+            to_attr="featured_images",
+        ),
+
+        # Featured ride prices
+        Prefetch(
+            "prices",
+            queryset=current_prices,
+            to_attr="featured_prices",
+        ),
+
+    )
+    .order_by("-created_at")
+)
 
 
     # -----------------------------------------
@@ -7323,6 +7340,17 @@ def chatbot_rule_toggle_status(request, pk):
         "chatbot_rule_list"
     )
 
+# =========================================================
+# CHATBOT SUPPORTED LANGUAGES
+# =========================================================
+
+SUPPORTED_CHAT_LANGUAGES = {
+    "en": "English",
+    "ml": "Malayalam",
+    "hi": "Hindi",
+    "ta": "Tamil",
+}    
+
 
 def get_or_create_chat_session(request):
 
@@ -7353,7 +7381,8 @@ def get_or_create_chat_session(request):
 
     chat_session = ChatSession.objects.create(
         browser_session_key=browser_session_key,
-        onboarding_step="name",
+        onboarding_step="language",
+        language="en",
     )
 
     request.session[
@@ -7463,23 +7492,61 @@ def clean_indian_phone(phone):
     return phone
 
 
+def is_valid_multilingual_name(name):
+    """
+    Validate names written in English, Malayalam,
+    Hindi and Tamil.
 
+    Unicode:
+    L = Letter
+    M = Combining mark
+    """
 
+    name = str(name or "").strip()
 
+    if len(name) < 2:
+        return False
 
+    has_letter = False
 
+    allowed_characters = {
+        " ",
+        ".",
+        "'",
+        "-",
+    }
 
+    for char in name:
 
+        if char in allowed_characters:
+            continue
+
+        category = unicodedata.category(char)
+
+        # Normal Unicode letters
+        if category.startswith("L"):
+            has_letter = True
+            continue
+
+        # Combining marks are required for
+        # Malayalam / Hindi / Tamil vowel signs.
+        if category.startswith("M"):
+            continue
+
+        return False
+
+    return has_letter
 
 
 @require_POST
 def chatbot_message(request):
 
-    # ==========================================
+    # =====================================================
     # 1. READ JSON REQUEST
-    # ==========================================
+    # =====================================================
 
     try:
+
         payload = json.loads(
             request.body.decode("utf-8")
         )
@@ -7488,6 +7555,7 @@ def chatbot_message(request):
         json.JSONDecodeError,
         UnicodeDecodeError,
     ):
+
         return JsonResponse(
             {
                 "success": False,
@@ -7496,12 +7564,14 @@ def chatbot_message(request):
             status=400,
         )
 
-    user_message = payload.get(
-        "message",
-        "",
+
+    user_message = str(
+        payload.get("message", "")
     ).strip()
 
+
     if not user_message:
+
         return JsonResponse(
             {
                 "success": False,
@@ -7510,7 +7580,9 @@ def chatbot_message(request):
             status=400,
         )
 
+
     if len(user_message) > 1000:
+
         return JsonResponse(
             {
                 "success": False,
@@ -7519,41 +7591,183 @@ def chatbot_message(request):
             status=400,
         )
 
-    # ==========================================
-    # 2. GET OR CREATE CHAT SESSION
-    # ==========================================
+
+    # =====================================================
+    # 2. GET / CREATE CHAT SESSION
+    # =====================================================
 
     chat_session = get_or_create_chat_session(
         request
     )
 
-    # Store visitor message.
-    ChatMessage.objects.create(
+
+    # =====================================================
+    # 3. LANGUAGE SELECTION
+    # =====================================================
+
+    if chat_session.onboarding_step == "language":
+
+        selected_language = str(
+            payload.get("language")
+            or user_message
+        ).strip().lower()
+
+
+        if (
+            selected_language
+            not in SUPPORTED_CHAT_LANGUAGES
+        ):
+
+            return JsonResponse(
+                {
+                    "success": True,
+
+                    "response": (
+                        "Please choose your "
+                        "preferred language."
+                    ),
+
+                    "response_type": "language",
+
+                    "onboarding_step": "language",
+
+                    "show_language_options": True,
+
+                    "languages": [
+                        {
+                            "code": "en",
+                            "name": "English",
+                        },
+                        {
+                            "code": "ml",
+                            "name": "മലയാളം",
+                        },
+                        {
+                            "code": "hi",
+                            "name": "हिंदी",
+                        },
+                        {
+                            "code": "ta",
+                            "name": "தமிழ்",
+                        },
+                    ],
+
+                    "show_quick_replies": False,
+                }
+            )
+
+
+        # ---------------------------------------------
+        # Save selected language
+        # ---------------------------------------------
+
+        chat_session.language = selected_language
+
+        chat_session.onboarding_step = "name"
+
+        chat_session.save(
+            update_fields=[
+                "language",
+                "onboarding_step",
+                "updated_at",
+            ]
+        )
+
+
+        # Store selected language as user message
+        ChatMessage.objects.create(
+            session=chat_session,
+            sender="user",
+            message=SUPPORTED_CHAT_LANGUAGES[
+                selected_language
+            ],
+            language=selected_language,
+            intent="language_selected",
+        )
+
+
+        # Ask name
+        english_response = (
+            "Great! Before we begin, "
+            "may I know your full name?"
+        )
+
+
+        bot_response = translate_from_english(
+            english_response,
+            selected_language,
+        )
+
+
+        ChatMessage.objects.create(
+            session=chat_session,
+            sender="bot",
+            message=english_response,
+            translated_message=bot_response,
+            language=selected_language,
+            intent="collect_name",
+        )
+
+
+        return JsonResponse(
+            {
+                "success": True,
+                "response": bot_response,
+                "response_type": "text",
+                "onboarding_step": "name",
+                "language": selected_language,
+                "show_language_options": False,
+                "show_quick_replies": False,
+            }
+        )
+
+
+    # =====================================================
+    # 4. STORE USER MESSAGE
+    # =====================================================
+
+    user_chat_message = ChatMessage.objects.create(
         session=chat_session,
         sender="user",
         message=user_message,
+        language=chat_session.language,
     )
 
-    # ==========================================
-    # 3. ONBOARDING: FULL NAME
-    # ==========================================
+
+    # =====================================================
+    # 5. ONBOARDING — NAME
+    # =====================================================
 
     if chat_session.onboarding_step == "name":
 
         full_name = user_message.strip()
 
+
+        # ---------------------------------------------
+        # Minimum length
+        # ---------------------------------------------
+
         if len(full_name) < 2:
 
-            bot_response = (
+            english_response = (
                 "Please enter your complete name."
             )
 
+            bot_response = translate_from_english(
+                english_response,
+                chat_session.language,
+            )
+
+
             ChatMessage.objects.create(
                 session=chat_session,
                 sender="bot",
-                message=bot_response,
+                message=english_response,
+                translated_message=bot_response,
+                language=chat_session.language,
                 intent="collect_name",
             )
+
 
             return JsonResponse(
                 {
@@ -7561,26 +7775,41 @@ def chatbot_message(request):
                     "response": bot_response,
                     "response_type": "text",
                     "onboarding_step": "name",
+                    "language": chat_session.language,
                     "show_quick_replies": False,
                 }
             )
 
-        if not re.fullmatch(
-            r"[A-Za-zÀ-ÿ.'\-\s]+",
-            full_name,
+
+        # ---------------------------------------------
+        # Multilingual name validation
+        # ---------------------------------------------
+
+        if not is_valid_multilingual_name(
+            full_name
         ):
 
-            bot_response = (
-                "Please enter a valid name using "
-                "letters only."
+            english_response = (
+                "Please enter a valid name "
+                "using letters only."
             )
+
+
+            bot_response = translate_from_english(
+                english_response,
+                chat_session.language,
+            )
+
 
             ChatMessage.objects.create(
                 session=chat_session,
                 sender="bot",
-                message=bot_response,
+                message=english_response,
+                translated_message=bot_response,
+                language=chat_session.language,
                 intent="collect_name",
             )
+
 
             return JsonResponse(
                 {
@@ -7588,11 +7817,18 @@ def chatbot_message(request):
                     "response": bot_response,
                     "response_type": "text",
                     "onboarding_step": "name",
+                    "language": chat_session.language,
                     "show_quick_replies": False,
                 }
             )
 
+
+        # ---------------------------------------------
+        # Save valid name
+        # ---------------------------------------------
+
         chat_session.customer_name = full_name
+
         chat_session.onboarding_step = "phone"
 
         chat_session.save(
@@ -7603,17 +7839,28 @@ def chatbot_message(request):
             ]
         )
 
-        bot_response = (
+
+        english_response = (
             f"Nice to meet you, {full_name}! "
             "Please enter your 10-digit mobile number."
         )
 
+
+        bot_response = translate_from_english(
+            english_response,
+            chat_session.language,
+        )
+
+
         ChatMessage.objects.create(
             session=chat_session,
             sender="bot",
-            message=bot_response,
+            message=english_response,
+            translated_message=bot_response,
+            language=chat_session.language,
             intent="collect_phone",
         )
+
 
         return JsonResponse(
             {
@@ -7621,13 +7868,15 @@ def chatbot_message(request):
                 "response": bot_response,
                 "response_type": "text",
                 "onboarding_step": "phone",
+                "language": chat_session.language,
                 "show_quick_replies": False,
             }
         )
 
-    # ==========================================
-    # 4. ONBOARDING: PHONE NUMBER
-    # ==========================================
+
+    # =====================================================
+    # 6. ONBOARDING — PHONE
+    # =====================================================
 
     if chat_session.onboarding_step == "phone":
 
@@ -7635,19 +7884,30 @@ def chatbot_message(request):
             user_message
         )
 
+
         if not phone:
 
-            bot_response = (
+            english_response = (
                 "Please enter a valid 10-digit "
                 "Indian mobile number."
             )
 
+
+            bot_response = translate_from_english(
+                english_response,
+                chat_session.language,
+            )
+
+
             ChatMessage.objects.create(
                 session=chat_session,
                 sender="bot",
-                message=bot_response,
+                message=english_response,
+                translated_message=bot_response,
+                language=chat_session.language,
                 intent="collect_phone",
             )
+
 
             return JsonResponse(
                 {
@@ -7655,11 +7915,15 @@ def chatbot_message(request):
                     "response": bot_response,
                     "response_type": "text",
                     "onboarding_step": "phone",
+                    "language": chat_session.language,
                     "show_quick_replies": False,
                 }
             )
 
+
+        # Save phone
         chat_session.customer_phone = phone
+
         chat_session.onboarding_step = "email"
 
         chat_session.save(
@@ -7670,18 +7934,29 @@ def chatbot_message(request):
             ]
         )
 
-        bot_response = (
+
+        english_response = (
             "Thank you. Please enter your email "
             "address, or type Skip if you do not "
             "want to provide one."
         )
 
+
+        bot_response = translate_from_english(
+            english_response,
+            chat_session.language,
+        )
+
+
         ChatMessage.objects.create(
             session=chat_session,
             sender="bot",
-            message=bot_response,
+            message=english_response,
+            translated_message=bot_response,
+            language=chat_session.language,
             intent="collect_email",
         )
+
 
         return JsonResponse(
             {
@@ -7689,28 +7964,56 @@ def chatbot_message(request):
                 "response": bot_response,
                 "response_type": "text",
                 "onboarding_step": "email",
+                "language": chat_session.language,
                 "show_quick_replies": False,
             }
         )
 
-    # ==========================================
-    # 5. ONBOARDING: EMAIL
-    # ==========================================
+
+    # =====================================================
+    # 7. ONBOARDING — EMAIL
+    # =====================================================
 
     if chat_session.onboarding_step == "email":
 
         submitted_email = user_message.strip()
 
+
+        # ---------------------------------------------
+        # Translate Skip/No/Later into English
+        # ---------------------------------------------
+
+        if chat_session.language == "en":
+
+            english_email_message = (
+                submitted_email
+            )
+
+        else:
+
+            english_email_message = (
+                translate_to_english(
+                    submitted_email,
+                    chat_session.language,
+                )
+            )
+
+
         normalized_email_message = (
-            submitted_email.lower()
+            english_email_message
+            .strip()
+            .lower()
         )
+
 
         skip_values = [
             "skip",
             "no",
+            "no thanks",
             "not now",
             "later",
         ]
+
 
         if normalized_email_message in skip_values:
 
@@ -7719,23 +8022,34 @@ def chatbot_message(request):
         else:
 
             try:
+
                 validate_email(
                     submitted_email
                 )
 
             except ValidationError:
 
-                bot_response = (
+                english_response = (
                     "Please enter a valid email "
                     "address, or type Skip."
                 )
 
+
+                bot_response = translate_from_english(
+                    english_response,
+                    chat_session.language,
+                )
+
+
                 ChatMessage.objects.create(
                     session=chat_session,
                     sender="bot",
-                    message=bot_response,
+                    message=english_response,
+                    translated_message=bot_response,
+                    language=chat_session.language,
                     intent="collect_email",
                 )
+
 
                 return JsonResponse(
                     {
@@ -7743,15 +8057,27 @@ def chatbot_message(request):
                         "response": bot_response,
                         "response_type": "text",
                         "onboarding_step": "email",
+                        "language": (
+                            chat_session.language
+                        ),
                         "show_quick_replies": False,
                     }
                 )
+
 
             chat_session.customer_email = (
                 submitted_email
             )
 
-        chat_session.onboarding_step = "completed"
+
+        # ---------------------------------------------
+        # Complete onboarding
+        # ---------------------------------------------
+
+        chat_session.onboarding_step = (
+            "completed"
+        )
+
 
         chat_session.save(
             update_fields=[
@@ -7761,7 +8087,8 @@ def chatbot_message(request):
             ]
         )
 
-        bot_response = (
+
+        english_response = (
             f"Thank you, "
             f"{chat_session.customer_name}! "
             "How can I help you today? "
@@ -7769,12 +8096,22 @@ def chatbot_message(request):
             "booking, safety, payment or tickets."
         )
 
+
+        bot_response = translate_from_english(
+            english_response,
+            chat_session.language,
+        )
+
+
         ChatMessage.objects.create(
             session=chat_session,
             sender="bot",
-            message=bot_response,
+            message=english_response,
+            translated_message=bot_response,
+            language=chat_session.language,
             intent="onboarding_completed",
         )
+
 
         return JsonResponse(
             {
@@ -7782,6 +8119,7 @@ def chatbot_message(request):
                 "response": bot_response,
                 "response_type": "menu",
                 "onboarding_step": "completed",
+                "language": chat_session.language,
                 "show_quick_replies": True,
                 "session_id": str(
                     chat_session.session_id
@@ -7789,17 +8127,98 @@ def chatbot_message(request):
             }
         )
 
-    # ==========================================
-    # 6. NORMAL CHATBOT QUESTIONS
-    # ==========================================
 
-    normalized_message = normalize_chatbot_text(
-        user_message
+    # =====================================================
+    # 8. NORMAL CHATBOT QUESTION
+    # =====================================================
+    #
+    # Malayalam / Hindi / Tamil
+    #
+    # User message
+    #       ↓
+    # Translate to English
+    #       ↓
+    # Match English rules
+    #       ↓
+    # Generate English response
+    #       ↓
+    # Translate response back
+    #
+    # =====================================================
+
+    if chat_session.language == "en":
+
+        english_user_message = user_message
+
+    else:
+
+        english_user_message = (
+            translate_to_english(
+                user_message,
+                chat_session.language,
+            )
+        )
+
+
+    # ---------------------------------------------
+    # Save English translation for debugging/admin
+    # ---------------------------------------------
+
+    user_chat_message.translated_message = (
+        english_user_message
     )
 
-    # ==========================================
-    # 7. CREATE ENQUIRY
-    # ==========================================
+    user_chat_message.save(
+        update_fields=[
+            "translated_message",
+        ]
+    )
+
+
+    # =====================================================
+    # DEBUG
+    # =====================================================
+
+    print("")
+    print("=" * 70)
+
+    print(
+        "CHATBOT LANGUAGE DEBUG"
+    )
+
+    print("=" * 70)
+
+    print(
+        "Selected language:",
+        chat_session.language,
+    )
+
+    print(
+        "Original user message:",
+        user_message,
+    )
+
+    print(
+        "English translated message:",
+        english_user_message,
+    )
+
+    print("=" * 70)
+    print("")
+
+
+    # =====================================================
+    # 9. NORMALIZE ENGLISH MESSAGE
+    # =====================================================
+
+    normalized_message = normalize_chatbot_text(
+        english_user_message
+    )
+
+
+    # =====================================================
+    # 10. CREATE ENQUIRY
+    # =====================================================
 
     enquiry_phrases = [
         "contact team",
@@ -7812,10 +8231,12 @@ def chatbot_message(request):
         "need help",
     ]
 
+
     wants_enquiry = any(
         phrase in normalized_message
         for phrase in enquiry_phrases
     )
+
 
     if wants_enquiry:
 
@@ -7828,18 +8249,29 @@ def chatbot_message(request):
             status="new",
         )
 
-        bot_response = (
+
+        english_response = (
             "Your enquiry has been submitted "
             "successfully. Our team will contact "
             "you shortly."
         )
 
+
+        bot_response = translate_from_english(
+            english_response,
+            chat_session.language,
+        )
+
+
         ChatMessage.objects.create(
             session=chat_session,
             sender="bot",
-            message=bot_response,
+            message=english_response,
+            translated_message=bot_response,
+            language=chat_session.language,
             intent="enquiry_created",
         )
+
 
         return JsonResponse(
             {
@@ -7849,15 +8281,17 @@ def chatbot_message(request):
                 "enquiry_created": True,
                 "enquiry_id": enquiry.id,
                 "show_quick_replies": True,
+                "language": chat_session.language,
                 "session_id": str(
                     chat_session.session_id
                 ),
             }
         )
 
-    # ==========================================
-    # 8. SHOW CURRENT ACTIVE RIDE PRICES
-    # ==========================================
+
+    # =====================================================
+    # 11. CURRENT RIDE PRICES
+    # =====================================================
 
     ride_price_keywords = [
         "price",
@@ -7868,16 +8302,20 @@ def chatbot_message(request):
         "cost",
         "charges",
         "rate",
+        "how much",
     ]
+
 
     wants_ride_prices = any(
         keyword in normalized_message
         for keyword in ride_price_keywords
     )
 
+
     if wants_ride_prices:
 
         today = date.today()
+
 
         active_prices = (
             RidePrice.objects
@@ -7895,8 +8333,9 @@ def chatbot_message(request):
             )
         )
 
-        # Keep only one current price per ride.
+
         latest_prices = {}
+
 
         for ride_price in active_prices:
 
@@ -7904,9 +8343,11 @@ def chatbot_message(request):
                 ride_price.ride_id
                 not in latest_prices
             ):
+
                 latest_prices[
                     ride_price.ride_id
                 ] = ride_price
+
 
         if latest_prices:
 
@@ -7915,41 +8356,71 @@ def chatbot_message(request):
                 "",
             ]
 
-            for ride_price in latest_prices.values():
+
+            for ride_price in (
+                latest_prices.values()
+            ):
 
                 formatted_price = (
                     f"{ride_price.price:,.2f}"
                 )
 
+
                 response_lines.append(
                     f"• {ride_price.ride.name} "
-                    f"- ₹{formatted_price} per person"
+                    f"- ₹{formatted_price} "
+                    "per person"
                 )
 
-            bot_response = "\n".join(
+
+            english_response = "\n".join(
                 response_lines
             )
+
 
             action = {
                 "text": "Book Your Adventure",
                 "url": "/bookings/",
             }
 
+
         else:
 
-            bot_response = (
+            english_response = (
                 "Currently, no active ride prices "
                 "are available for today."
             )
 
             action = None
 
+
+        # Translate answer
+        bot_response = translate_from_english(
+            english_response,
+            chat_session.language,
+        )
+
+
+        # Translate button
+        if action:
+
+            action["text"] = (
+                translate_from_english(
+                    action["text"],
+                    chat_session.language,
+                )
+            )
+
+
         ChatMessage.objects.create(
             session=chat_session,
             sender="bot",
-            message=bot_response,
+            message=english_response,
+            translated_message=bot_response,
+            language=chat_session.language,
             intent="ride_prices",
         )
+
 
         return JsonResponse(
             {
@@ -7957,6 +8428,7 @@ def chatbot_message(request):
                 "response": bot_response,
                 "response_type": "text",
                 "action": action,
+                "language": chat_session.language,
                 "show_quick_replies": True,
                 "session_id": str(
                     chat_session.session_id
@@ -7964,39 +8436,39 @@ def chatbot_message(request):
             }
         )
 
-    # ==========================================
-    # 9. FIND STATIC CHATBOT RULE
-    # ==========================================
+
+    # =====================================================
+    # 12. FIND ADMIN CHATBOT RULE
+    # =====================================================
 
     matched_rule = find_chatbot_rule(
-        user_message
+        english_user_message
     )
+
 
     if matched_rule:
 
-        bot_response = (
-            matched_rule.response
-        )
+        english_response = matched_rule.response
 
         intent = matched_rule.title
+
         action = None
+
 
         if (
             matched_rule.action_text
             and matched_rule.action_url
         ):
+
             action = {
-                "text": (
-                    matched_rule.action_text
-                ),
-                "url": (
-                    matched_rule.action_url
-                ),
+                "text": matched_rule.action_text,
+                "url": matched_rule.action_url,
             }
+
 
     else:
 
-        bot_response = (
+        english_response = (
             "Sorry, I could not understand that "
             "question. Please choose one of the "
             "options below or ask about booking, "
@@ -8004,32 +8476,67 @@ def chatbot_message(request):
         )
 
         intent = "fallback"
+
         action = None
 
-    # ==========================================
-    # 10. STORE BOT RESPONSE
-    # ==========================================
+
+    # =====================================================
+    # 13. TRANSLATE BOT RESPONSE
+    # =====================================================
+
+    bot_response = translate_from_english(
+        english_response,
+        chat_session.language,
+    )
+
+
+    # Translate action-button text
+    if action:
+
+        action["text"] = translate_from_english(
+            action["text"],
+            chat_session.language,
+        )
+
+
+    # =====================================================
+    # 14. STORE BOT RESPONSE
+    # =====================================================
 
     ChatMessage.objects.create(
         session=chat_session,
         sender="bot",
-        message=bot_response,
+        message=english_response,
+        translated_message=bot_response,
+        language=chat_session.language,
         intent=intent,
         matched_rule=matched_rule,
     )
+
+
+    # =====================================================
+    # 15. RETURN RESPONSE
+    # =====================================================
 
     return JsonResponse(
         {
             "success": True,
             "response": bot_response,
             "response_type": "text",
+
             "session_id": str(
                 chat_session.session_id
             ),
+
+            "language": chat_session.language,
+
             "action": action,
+
             "show_quick_replies": True,
         }
     )
+
+
 
 
 def chatbot_initialize(request):
@@ -8038,54 +8545,145 @@ def chatbot_initialize(request):
         request
     )
 
-    if chat_session.onboarding_step == "name":
+    # ==========================================
+    # LANGUAGE SELECTION
+    # ==========================================
+
+    if chat_session.onboarding_step == "language":
 
         response = (
+            "Welcome to Flying Fox Adventure! "
+            "Please choose your preferred language."
+        )
+
+        return JsonResponse(
+            {
+                "success": True,
+                "response": response,
+                "response_type": "language",
+                "onboarding_step": "language",
+
+                "show_language_options": True,
+
+                "languages": [
+                    {
+                        "code": "en",
+                        "name": "English",
+                    },
+                    {
+                        "code": "ml",
+                        "name": "മലയാളം",
+                    },
+                    {
+                        "code": "hi",
+                        "name": "हिंदी",
+                    },
+                    {
+                        "code": "ta",
+                        "name": "தமிழ்",
+                    },
+                ],
+
+                "show_quick_replies": False,
+
+                "customer_name": (
+                    chat_session.customer_name
+                ),
+            }
+        )
+
+    # ==========================================
+    # NAME
+    # ==========================================
+
+    elif chat_session.onboarding_step == "name":
+
+        english_response = (
             "Welcome to Flying Fox Adventure! "
             "Before we begin, may I know your "
             "full name?"
         )
 
+        response = translate_from_english(
+            english_response,
+            chat_session.language,
+        )
+
+    # ==========================================
+    # PHONE
+    # ==========================================
+
     elif chat_session.onboarding_step == "phone":
 
-        response = (
+        english_response = (
             f"Hello {chat_session.customer_name}! "
             "Please enter your 10-digit mobile number."
         )
 
+        response = translate_from_english(
+            english_response,
+            chat_session.language,
+        )
+
+    # ==========================================
+    # EMAIL
+    # ==========================================
+
     elif chat_session.onboarding_step == "email":
 
-        response = (
+        english_response = (
             "Please enter your email address, "
             "or type Skip."
         )
 
+        response = translate_from_english(
+            english_response,
+            chat_session.language,
+        )
+
+    # ==========================================
+    # COMPLETED
+    # ==========================================
+
     else:
 
-        response = (
+        english_response = (
             f"Welcome back, "
             f"{chat_session.customer_name}! "
             "How can I help you today?"
         )
 
+        response = translate_from_english(
+            english_response,
+            chat_session.language,
+        )
+
     return JsonResponse(
         {
             "success": True,
+
             "response": response,
+
+            "response_type": "text",
+
             "onboarding_step": (
                 chat_session.onboarding_step
             ),
+
+            "language": chat_session.language,
+
+            "show_language_options": False,
+
             "show_quick_replies": (
                 chat_session.onboarding_step
                 == "completed"
             ),
+
             "customer_name": (
                 chat_session.customer_name
             ),
         }
     )
-
-
 
 
 @_admin_required
@@ -8451,26 +9049,40 @@ def chat_enquiry_delete(
 # blog details 
 
 def blog_detail(request, slug):
+
+    # -----------------------------------------
+    # CURRENT BLOG
+    # -----------------------------------------
+
     blog = get_object_or_404(
         Blog,
         slug=slug,
     )
 
+
+    # -----------------------------------------
+    # RECENT BLOGS
+    # Exclude the article currently being read
+    # -----------------------------------------
+
     recent_blogs = (
         Blog.objects
-        .exclude(pk=blog.pk)
-        .order_by("-created_at")[:3]
+        .exclude(
+            pk=blog.pk
+        )
+        .order_by(
+            "-created_at"
+        )[:4]
     )
 
-    context = {
-        "blog": blog,
-        "recent_blogs": recent_blogs,
-    }
 
     return render(
         request,
         "frontend/blog_detail.html",
-        context,
+        {
+            "blog": blog,
+            "recent_blogs": recent_blogs,
+        },
     )
 
 
