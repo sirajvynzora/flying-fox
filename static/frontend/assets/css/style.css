@@ -30312,3 +30312,72 @@ strong i {
     z-index: 3 !important;
 }
 /* offers css end  */
+
+
+
+
+/* navbar bug fix css start */
+/* =========================================================
+   HOME HERO - REMOVE WHITE GAP UNDER/AROUND NAVBAR
+========================================================= */
+
+@media (min-width: 992px) {
+
+    .header-2 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999;
+    }
+
+    .header-2 .navbar {
+        padding: 28px 0;
+        background: transparent !important;
+    }
+
+    .hero-section.hs-2 {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+}
+
+
+
+/* =========================================================
+   MOBILE - FLOAT NAVBAR OVER PAGE HERO/BREADCRUMB
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .header-2 {
+        position: absolute !important;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+
+        z-index: 9999;
+    }
+
+
+    .header-2 .navbar {
+        width: 100%;
+
+        padding: 14px 12px !important;
+
+        background: transparent !important;
+    }
+
+
+    .header-2 .navbar > .container {
+        background: #ffffff;
+
+        min-height: 66px !important;
+
+        border-radius: 50px;
+    }
+
+}
+/* bug fix css end  */

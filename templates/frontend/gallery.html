@@ -56,180 +56,173 @@
   <!-- breadcrumb end -->
 
   <!-- gallery-area -->
-  <div class="gallery-area py-120">
-    
+<!-- gallery-area -->
+<div class="gallery-area py-120">
+
     <div class="container">
-      <div class="row">
-        <div class="col-lg-7 mx-auto">
-          <div class="site-heading text-center wow fadeInDown" data-wow-delay=".2s">
-            <span class="site-title-tagline"><i class="far fa-backpack"></i>our Gallery</span>
-            <h3 class="site-title">Let's Check Our Photo Gallery</h3>
-            <div class="heading-divider"></div>
-          </div>
+
+        <div class="row">
+            <div class="col-lg-7 mx-auto">
+                <div class="site-heading text-center wow fadeInDown"
+                     data-wow-delay=".2s">
+
+                    <span class="site-title-tagline">
+                        <i class="far fa-backpack"></i>
+                        our Gallery
+                    </span>
+
+                    <h3 class="site-title">
+                        Let's Check Our Photo Gallery
+                    </h3>
+
+                    <div class="heading-divider"></div>
+
+                </div>
+            </div>
         </div>
-      </div>
-     <div class="row g-4 popup-gallery">
 
-{% for item in gallery_items %}
 
-<div
-    class="col-md-3 wow fadeInUp"
-    data-wow-delay=".2s"
->
+        <div class="row g-4 popup-gallery">
 
-    <div class="gallery-item">
+            {% for item in gallery_items %}
 
-        <div class="gallery-img">
+            <div
+                class="col-md-3 wow fadeInUp"
+                data-wow-delay=".2s"
+            >
 
-            {% if item.image %}
+                <div class="gallery-item">
 
-                <img
-                    src="{{ item.image.url }}"
-                    alt="{{ item.category.name }}"
-                >
+                    <div class="gallery-img">
 
-            {% elif item.video %}
+                        {% if item.image %}
 
-                <video
-                    muted
-                    autoplay
-                    loop
-                    playsinline
-                >
+                        <img
+                            src="{{ item.image.url }}"
+                            alt="{{ item.category.name }}"
+                        >
 
-                    <source
-                        src="{{ item.video.url }}"
-                        type="video/mp4"
+                        {% elif item.video %}
+
+                        <video
+                            muted
+                            autoplay
+                            loop
+                            playsinline
+                        >
+                            <source
+                                src="{{ item.video.url }}"
+                                type="video/mp4"
+                            >
+                        </video>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="gallery-content">
+
+                        {% if item.image %}
+
+                        <a
+                            class="popup-img gallery-link"
+                            href="{{ item.image.url }}"
+                        >
+                            <i class="fal fa-plus"></i>
+                        </a>
+
+                        {% elif item.video %}
+
+                        <a
+                            class="popup-video gallery-link"
+                            href="{{ item.video.url }}"
+                        >
+                            <i class="fas fa-play"></i>
+                        </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% empty %}
+
+            <div class="col-12">
+                <div class="text-center">
+                    <h4>No gallery items found.</h4>
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- ==========================================
+             PAGINATION
+        =========================================== -->
+
+        {% if gallery_items.has_other_pages %}
+
+        <div class="pagination-area">
+
+            <ul class="pagination">
+
+                {% if gallery_items.has_previous %}
+
+                <li class="page-item">
+                    <a
+                        class="page-link"
+                        href="?page={{ gallery_items.previous_page_number }}"
                     >
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                </li>
 
-                </video>
+                {% endif %}
 
-            {% endif %}
+
+                {% for page in gallery_items.paginator.page_range %}
+
+                <li class="page-item {% if gallery_items.number == page %}active{% endif %}">
+                    <a
+                        class="page-link"
+                        href="?page={{ page }}"
+                    >
+                        {{ page }}
+                    </a>
+                </li>
+
+                {% endfor %}
+
+
+                {% if gallery_items.has_next %}
+
+                <li class="page-item">
+                    <a
+                        class="page-link"
+                        href="?page={{ gallery_items.next_page_number }}"
+                    >
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </li>
+
+                {% endif %}
+
+            </ul>
 
         </div>
 
-
-        <div class="gallery-content">
-
-            {% if item.image %}
-
-                <a
-                    class="popup-img gallery-link"
-                    href="{{ item.image.url }}"
-                >
-
-                    <i class="fal fa-plus"></i>
-
-                </a>
-
-            {% elif item.video %}
-
-                <a
-                    class="popup-video gallery-link"
-                    href="{{ item.video.url }}"
-                >
-
-                    <i class="fas fa-play"></i>
-
-                </a>
-
-            {% endif %}
-
-        </div>
-
-    </div>
-
-</div>
-
-{% empty %}
-
-<div class="col-12">
-
-    <div class="text-center">
-
-        <h4>
-
-            No gallery items found.
-
-        </h4>
-
-    </div>
-
-</div>
-
-{% endfor %}
-
-</div>
-    </div>
-  </div>
-
-
-
-  {% if gallery_items.has_other_pages %}
-
-<div class="pagination-area">
-
-    <ul class="pagination">
-
-        {% if gallery_items.has_previous %}
-
-        <li class="page-item">
-
-            <a
-                class="page-link"
-                href="?page={{ gallery_items.previous_page_number }}"
-            >
-
-                <i class="fas fa-arrow-left"></i>
-
-            </a>
-
-        </li>
-
         {% endif %}
 
-
-        {% for page in gallery_items.paginator.page_range %}
-
-        <li class="page-item {% if gallery_items.number == page %}active{% endif %}">
-
-            <a
-                class="page-link"
-                href="?page={{ page }}"
-            >
-
-                {{ page }}
-
-            </a>
-
-        </li>
-
-        {% endfor %}
-
-
-        {% if gallery_items.has_next %}
-
-        <li class="page-item">
-
-            <a
-                class="page-link"
-                href="?page={{ gallery_items.next_page_number }}"
-            >
-
-                <i class="fas fa-arrow-right"></i>
-
-            </a>
-
-        </li>
-
-        {% endif %}
-
-    </ul>
+    </div>
 
 </div>
-
-{% endif %}
-  <!-- gallery-area end -->
+<!-- gallery-area end -->
 {% endblock %}
 
 
