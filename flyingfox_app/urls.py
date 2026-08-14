@@ -330,6 +330,13 @@ path(
     name="resend_login_otp"
 ),
 
+
+path(
+    "my-account/",
+    views.user_dashboard,
+    name="user_dashboard"
+),
+
 path(
     "logout/",
     views.user_logout,
@@ -349,10 +356,28 @@ path(
 
 path('bookings/', views.bookings, name='bookings'),
 path(
-        "booking/review/",
-        views.booking_review,
-        name="booking_review",
-    ),
+    "booking/review/",
+    views.booking_review,
+    name="booking_review",
+),
+
+path(
+    "booking/confirm/",
+    views.booking_confirm,
+    name="booking_confirm",
+),
+
+path(
+    "booking/payment/verify/",
+    views.booking_payment_verify,
+    name="booking_payment_verify",
+),
+
+path(
+    "booking/payment/success/<uuid:booking_id>/",
+    views.booking_payment_success,
+    name="booking_payment_success",
+),
 
    # Temporary fake payment success
     path(

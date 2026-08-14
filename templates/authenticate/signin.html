@@ -22,17 +22,79 @@
         ====================================================== -->
 
         <div class="ff-login-page-heading">
+        </div>
 
-            <span class="ff-login-tag">
-                <i class="far fa-user"></i>
-                My Account
+
+
+
+
+        <!-- =====================================================
+     LOGIN PROGRESS HEADER
+====================================================== -->
+
+<div class="ff-auth-progress">
+
+     <div class="ff-auth-steps">
+
+        <!-- STEP 1 -->
+
+        <div class="ff-auth-step active">
+
+            <div class="ff-auth-step-icon">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+
+            <span>
+                Mobile Number
             </span>
 
-            <h1>
-                Welcome Back
-            </h1>
+        </div>
+
+
+        <div class="ff-auth-step-line"></div>
+
+
+        <!-- STEP 2 -->
+
+        <div class="ff-auth-step">
+
+            <div class="ff-auth-step-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+
+            <span>
+                Verify OTP
+            </span>
 
         </div>
+
+
+        <div class="ff-auth-step-line"></div>
+
+
+        <!-- STEP 3 -->
+
+        <div class="ff-auth-step">
+
+            <div class="ff-auth-step-icon">
+                <i class="fas fa-ticket-alt"></i>
+            </div>
+
+            <span>
+                Ready to Book
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
 
 
         <!-- =====================================================
@@ -49,7 +111,7 @@
             <div class="ff-login-image-side">
 
                 <img
-                    src="{% static 'frontend/assets/img/about/img-3.jpg' %}"
+                    src="{% static 'frontend/assets/img/home/img-3.jpg' %}"
                     alt="Flying Fox Adventure Munnar"
                     class="ff-login-image"
                 >
@@ -228,17 +290,20 @@
 
                                 <i class="far fa-mobile"></i>
 
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    id="phone"
-                                    class="ff-login-input"
-                                    placeholder="Mobile Number"
-                                    maxlength="10"
-                                    inputmode="numeric"
-                                    autocomplete="tel"
-                                    required
-                                >
+<input
+    type="tel"
+    name="phone"
+    id="phone"
+    class="ff-login-input"
+    placeholder="Mobile Number"
+    value="{{ phone|default:'' }}"
+    maxlength="10"
+    minlength="10"
+    inputmode="numeric"
+    autocomplete="tel"
+    pattern="[0-9]{10}"
+    required
+>
 
                             </div>
 

@@ -32,4 +32,6 @@ __pycache__/
 staticfiles/
 
 # Environment variables
-.env
+.envmedia/rides/videos/16107159_3840_2160_30fps.mp4
+
+/media/rides/videos/

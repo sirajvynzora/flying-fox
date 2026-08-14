@@ -1,6 +1,7 @@
 {% extends "frontend/base.html" %}
 {% load static %}
 
+
 {% block title %}
 {{ ride.name }} | Flying Fox Adventure
 {% endblock %}
@@ -9,49 +10,43 @@
 {% block content %}
 
 
-<!-- =====================================================
-     RIDE HERO IMAGE SLIDER
-     KEEPING YOUR CURRENT HERO EXACTLY
-===================================================== -->
+<!-- =========================================================
+     RIDE HERO
+     FIRST IMAGE ONLY
+========================================================= -->
 
-{% if ride_images %}
+<section class="ff-ride-detail-hero">
 
-    <div class="ride-image-slider owl-carousel owl-theme">
+    {% if hero_image %}
 
-        {% for media in ride_images %}
+        <img
+            src="{{ hero_image.image.url }}"
+            alt="{{ ride.name }}"
+            class="ff-ride-detail-hero-image"
+        >
 
-            <div class="ride-image-slide">
-
-                <img
-                    src="{{ media.image.url }}"
-                    alt="{{ ride.name }}"
-                >
-
-            </div>
-
-        {% endfor %}
-
-    </div>
-
-{% else %}
-
-    <div class="ride-image-slide">
+    {% else %}
 
         <img
             src="{% static 'frontend/assets/img/breadcrumb/01.webp' %}"
             alt="{{ ride.name }}"
+            class="ff-ride-detail-hero-image"
         >
 
-    </div>
-
-{% endif %}
+    {% endif %}
 
 
-<!-- =====================================================
+    <div class="ff-ride-detail-hero-overlay"></div>
+
+</section>
+
+
+
+<!-- =========================================================
      RIDE DETAILS
-===================================================== -->
+========================================================= -->
 
-<div class="tour-single py-120">
+<section class="tour-single ff-ride-detail-page py-100">
 
     <div class="container">
 
@@ -67,17 +62,29 @@
                 <div class="tour-single-wrap">
 
 
-                    <!-- =========================================
+                    <!-- =================================================
                          RIDE TITLE
-                    ========================================== -->
+                    ================================================== -->
 
-                    <div class="tour-single-top">
+                    <div class="tour-single-top ff-ride-detail-top">
 
                         <div class="top-info">
 
+                            <span class="ff-ride-detail-label">
+
+                                <i class="fas fa-bolt"></i>
+
+                                Flying Fox Ride
+
+                            </span>
+
+
                             <h1 class="title">
+
                                 {{ ride.name }}
+
                             </h1>
+
 
                             <p class="location">
 
@@ -98,7 +105,7 @@
 
                                     <i class="far fa-star"></i>
 
-                                    Featured
+                                    Featured Ride
 
                                 </span>
 
@@ -109,11 +116,120 @@
                     </div>
 
 
-                    <!-- =========================================
-                         QUICK INFORMATION
-                    ========================================== -->
 
-                    <div class="tour-single-info">
+                    <!-- =================================================
+                         RIDE GALLERY
+                         REMAINING IMAGES + VIDEOS
+                    ================================================== -->
+
+{% if gallery_images or ride_videos %}
+
+<section class="ff-ride-media-showcase">
+
+    <!-- Heading -->
+    <div class="ff-ride-media-heading">
+
+        <div>
+            <h3>
+                Experience {{ ride.name }}
+            </h3>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         COMBINED IMAGE + VIDEO SLIDER
+    ====================================================== -->
+
+    <div class="ff-ride-media-slider owl-carousel owl-theme">
+
+
+        <!-- IMAGES -->
+        {% for media in gallery_images %}
+
+            <div class="ff-ride-media-slide">
+
+                <div class="ff-ride-media-frame">
+
+                    <a
+                        href="{{ media.image.url }}"
+                        class="popup-img ff-ride-gallery-image"
+                        aria-label="View {{ ride.name }} image"
+                    >
+
+                        <img
+                            src="{{ media.image.url }}"
+                            alt="{{ ride.name }}"
+                            loading="lazy"
+                        >
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+        <!-- VIDEOS -->
+        {% for media in ride_videos %}
+
+            <div class="ff-ride-media-slide">
+
+                <div class="ff-ride-media-frame ff-ride-media-frame-video">
+
+                    <video
+                        class="ff-ride-gallery-video"
+                        controls
+                        playsinline
+                        preload="metadata"
+                    >
+
+                        <source
+                            src="{{ media.video.url }}"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video.
+
+                    </video>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+
+                    <!-- =================================================
+                         QUICK INFORMATION
+                    ================================================== -->
+
+                    <div class="tour-single-info ff-ride-quick-info">
+
+                        <div class="ff-ride-section-heading">
+
+                            <span>
+
+                                <i class="far fa-circle-info"></i>
+
+                                Quick Information
+
+                            </span>
+
+                        </div>
+
 
                         <div class="row g-4">
 
@@ -130,6 +246,7 @@
 
                                     </div>
 
+
                                     <div class="content">
 
                                         <h6>
@@ -137,7 +254,9 @@
                                         </h6>
 
                                         <span>
+
                                             {{ ride.duration }}
+
                                         </span>
 
                                     </div>
@@ -145,6 +264,7 @@
                                 </div>
 
                             </div>
+
 
 
                             <!-- Availability -->
@@ -159,11 +279,13 @@
 
                                     </div>
 
+
                                     <div class="content">
 
                                         <h6>
                                             Availability
                                         </h6>
+
 
                                         <span>
 
@@ -186,6 +308,7 @@
                             </div>
 
 
+
                             <!-- Price -->
 
                             <div class="col-md-6 col-lg-4">
@@ -198,11 +321,13 @@
 
                                     </div>
 
+
                                     <div class="content">
 
                                         <h6>
                                             Ride Price
                                         </h6>
+
 
                                         <span>
 
@@ -230,15 +355,32 @@
                     </div>
 
 
-                    <!-- =========================================
-                         DESCRIPTION
-                    ========================================== -->
 
-                    <div class="tour-details">
+                    <!-- =================================================
+                         ABOUT THIS RIDE
+                    ================================================== -->
 
-                        <h4 class="mb-3">
-                            About This Ride
-                        </h4>
+                    <div class="tour-details ff-ride-about-section">
+
+                        <div class="ff-ride-content-heading">
+
+                            <span>
+
+                                <i class="far fa-bolt"></i>
+
+                                The Experience
+
+                            </span>
+
+
+                            <h3>
+
+                                About This Ride
+
+                            </h3>
+
+                        </div>
+
 
                         <div class="ride-description">
 
@@ -247,17 +389,38 @@
                         </div>
 
 
-                        <!-- =====================================
+
+                        <!-- =================================================
                              SAFETY INFORMATION
-                        ====================================== -->
+                        ================================================== -->
 
                         {% if ride.safety_notes %}
 
-                            <div class="tour-highlight">
+                            <div class="tour-highlight ff-ride-safety-box">
 
-                                <h5>
-                                    Safety Information
-                                </h5>
+                                <div class="ff-ride-sub-heading">
+
+                                    <div class="ff-ride-sub-heading-icon">
+
+                                        <i class="fas fa-shield-alt"></i>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            Ride Safety
+                                        </span>
+
+                                        <h5>
+                                            Safety Information
+                                        </h5>
+
+                                    </div>
+
+                                </div>
+
 
                                 <div class="ride-safety-content">
 
@@ -270,14 +433,17 @@
                         {% endif %}
 
 
-                        <!-- =====================================
-                             RIDE HIGHLIGHTS
-                        ====================================== -->
 
-                        <div class="tour-highlight">
+                        <!-- =================================================
+                             RIDE HIGHLIGHTS
+                        ================================================== -->
+
+                        <div class="tour-highlight ff-ride-highlights">
 
                             <h5>
+
                                 Ride Highlights
+
                             </h5>
 
 
@@ -329,20 +495,30 @@
                         </div>
 
 
-                        <!-- =====================================
-                             INCLUDED / IMPORTANT INFO
-                        ====================================== -->
 
-                        <div class="row">
+                        <!-- =================================================
+                             INCLUDED / BEFORE YOU RIDE
+                        ================================================== -->
 
+                        <div class="row g-4">
+
+
+                            <!-- Included -->
 
                             <div class="col-lg-6">
 
-                                <div class="list-included">
+                                <div class="list-included ff-ride-info-box">
 
-                                    <h5>
-                                        Included
-                                    </h5>
+                                    <div class="ff-ride-info-box-heading">
+
+                                        <i class="far fa-circle-check"></i>
+
+                                        <h5>
+                                            Included
+                                        </h5>
+
+                                    </div>
+
 
                                     <ul class="list">
 
@@ -369,13 +545,23 @@
                             </div>
 
 
+
+                            <!-- Before You Ride -->
+
                             <div class="col-lg-6">
 
-                                <div class="list-notincluded">
+                                <div class="list-notincluded ff-ride-info-box">
 
-                                    <h5>
-                                        Before You Ride
-                                    </h5>
+                                    <div class="ff-ride-info-box-heading">
+
+                                        <i class="far fa-circle-info"></i>
+
+                                        <h5>
+                                            Before You Ride
+                                        </h5>
+
+                                    </div>
+
 
                                     <ul class="list">
 
@@ -404,56 +590,8 @@
 
                         </div>
 
+
                     </div>
-
-
-                    <!-- =========================================
-                         RIDE VIDEOS
-                    ========================================== -->
-
-                    {% if ride_videos %}
-
-                        <div class="ride-detail-video-section mt-5">
-
-                            <h4 class="mb-4">
-                                Ride Videos
-                            </h4>
-
-
-                            <div class="row g-4">
-
-                                {% for media in ride_videos %}
-
-                                    <div class="col-md-6">
-
-                                        <div class="ride-detail-video">
-
-                                            <video
-                                                controls
-                                                playsinline
-                                                preload="metadata"
-                                            >
-
-                                                <source
-                                                    src="{{ media.video.url }}"
-                                                    type="video/mp4"
-                                                >
-
-                                                Your browser does not support video.
-
-                                            </video>
-
-                                        </div>
-
-                                    </div>
-
-                                {% endfor %}
-
-                            </div>
-
-                        </div>
-
-                    {% endif %}
 
 
                 </div>
@@ -468,27 +606,34 @@
 
             <div class="col-lg-4">
 
-                <div class="sidebar">
+                <aside class="sidebar ff-ride-sidebar">
 
 
-                    <!-- =========================================
+                    <!-- =================================================
                          PRICE
-                    ========================================== -->
+                    ================================================== -->
 
-                    <div class="price">
-
+                    <div class="price ff-ride-price-card">
 
                         {% if ride.is_featured %}
 
-                            <h4 class="price-tag">
+                            <span class="ff-sidebar-label">
+
+                                <i class="far fa-star"></i>
+
                                 Featured Ride
-                            </h4>
+
+                            </span>
 
                         {% else %}
 
-                            <h4 class="price-tag">
+                            <span class="ff-sidebar-label">
+
+                                <i class="fas fa-bolt"></i>
+
                                 Flying Fox Adventure
-                            </h4>
+
+                            </span>
 
                         {% endif %}
 
@@ -497,16 +642,26 @@
 
                             {% if current_price %}
 
-                                From
+                                <small>
+                                    From
+                                </small>
 
                                 <span>
+
                                     ₹{{ current_price.price|floatformat:0 }}
+
                                 </span>
+
+                                <small>
+                                    per rider
+                                </small>
 
                             {% else %}
 
-                                <span>
+                                <span class="ff-contact-price">
+
                                     Contact For Price
+
                                 </span>
 
                             {% endif %}
@@ -516,19 +671,24 @@
                     </div>
 
 
-                    <!-- =========================================
-                         RIDE INFORMATION
-                    ========================================== -->
 
-                    <div class="destination-info mt-4">
+                    <!-- =================================================
+                         RIDE INFORMATION
+                    ================================================== -->
+
+                    <div class="destination-info ff-sidebar-info-card mt-4">
 
                         <h4>
+
                             Ride Information
+
                         </h4>
 
 
                         <ul>
 
+
+                            <!-- Duration -->
 
                             <li>
 
@@ -540,6 +700,7 @@
 
                                 </span>
 
+
                                 <span class="list-value">
 
                                     {{ ride.duration }}
@@ -548,6 +709,9 @@
 
                             </li>
 
+
+
+                            <!-- Location -->
 
                             <li>
 
@@ -559,6 +723,7 @@
 
                                 </span>
 
+
                                 <span class="list-value">
 
                                     Munnar, Kerala
@@ -567,6 +732,9 @@
 
                             </li>
 
+
+
+                            <!-- Status -->
 
                             <li>
 
@@ -578,9 +746,12 @@
 
                                 </span>
 
-                                <span class="list-value">
+
+                                <span class="list-value ff-ride-status">
 
                                     {% if ride.is_active %}
+
+                                        <i class="fas fa-circle"></i>
 
                                         Available
 
@@ -595,6 +766,9 @@
                             </li>
 
 
+
+                            <!-- Price -->
+
                             {% if current_price %}
 
                                 <li>
@@ -606,6 +780,7 @@
                                         Price
 
                                     </span>
+
 
                                     <span class="list-value">
 
@@ -623,9 +798,10 @@
                     </div>
 
 
-                    <!-- =========================================
+
+                    <!-- =================================================
                          BOOK BUTTON
-                    ========================================== -->
+                    ================================================== -->
 
                     {% if ride.is_active %}
 
@@ -633,7 +809,7 @@
 
                             <a
                                 href="{% url 'bookings' %}"
-                                class="theme-btn w-100 justify-content-center"
+                                class="theme-btn ff-ride-book-btn"
                             >
 
                                 Book This Ride
@@ -647,30 +823,48 @@
                     {% endif %}
 
 
-                    <!-- =========================================
+
+                    <!-- =================================================
                          HELP
-                    ========================================== -->
+                    ================================================== -->
 
-                    <div class="help mt-4">
+                    <div class="help ff-ride-help-card mt-4">
 
-                        <p>
+                        <div class="ff-help-icon">
 
-                            Need help booking?
+                            <i class="far fa-headset"></i>
 
-                            <a href="{% url 'contact' %}">
-                                Contact Us
-                            </a>
+                        </div>
 
-                        </p>
+
+                        <div>
+
+                            <span>
+                                Need help?
+                            </span>
+
+
+                            <p>
+
+                                Have questions about this ride?
+
+                                <a href="{% url 'contact' %}">
+                                    Contact Us
+                                </a>
+
+                            </p>
+
+                        </div>
 
                     </div>
 
 
-                    <!-- =========================================
-                         BANNER
-                    ========================================== -->
 
-                    <div class="destination-banner mt-4">
+                    <!-- =================================================
+                         BANNER
+                    ================================================== -->
+
+                    {% comment %} <div class="destination-banner ff-ride-sidebar-banner mt-4">
 
                         <div class="img">
 
@@ -685,10 +879,10 @@
 
                         </div>
 
-                    </div>
+                    </div> {% endcomment %}
 
 
-                </div>
+                </aside>
 
             </div>
 
@@ -697,55 +891,142 @@
 
     </div>
 
-</div>
-
-<!-- ride details end -->
+</section>
 
 
 {% endblock %}
 
 
 
-{% block extra_js %}
+{% block extra_js%}
+
 
 <script>
 
-    $(document).ready(function () {
+$(document).ready(function () {
 
-        const rideSlider = $(".ride-image-slider");
+    const mediaSlider = $(".ff-ride-media-slider");
 
-        if (
-            rideSlider.length &&
-            !rideSlider.hasClass("owl-loaded")
-        ) {
 
-            rideSlider.owlCarousel({
+    if (
+        mediaSlider.length &&
+        !mediaSlider.hasClass("owl-loaded")
+    ) {
 
-                items: 1,
+        mediaSlider.owlCarousel({
 
-                loop:
-                    rideSlider.children().length > 1,
+            items: 1,
 
-                margin: 0,
+            loop: true,
 
-                nav: true,
+            margin: 0,
 
-                dots: true,
+            nav: true,
 
-                autoplay: false,
+            dots: true,
 
-                smartSpeed: 700,
+            autoplay: true,
 
-                navText: [
-                    '<i class="far fa-arrow-left"></i>',
-                    '<i class="far fa-arrow-right"></i>'
-                ]
+            autoplayTimeout: 4000,
+
+            autoplayHoverPause: true,
+
+            smartSpeed: 700,
+
+            navText: [
+                '<i class="fas fa-arrow-left"></i>',
+                '<i class="fas fa-arrow-right"></i>'
+            ]
+
+        });
+
+    }
+
+
+    /* =====================================================
+       VIDEO HANDLING
+    ===================================================== */
+
+    const videos = document.querySelectorAll(
+        ".ff-ride-gallery-video"
+    );
+
+
+    videos.forEach(function (video) {
+
+        /* pause carousel when video starts */
+        video.addEventListener("play", function () {
+
+            mediaSlider.trigger(
+                "stop.owl.autoplay"
+            );
+
+
+            /* pause every other video */
+
+            videos.forEach(function (otherVideo) {
+
+                if (otherVideo !== video) {
+
+                    otherVideo.pause();
+
+                }
+
+            });
+
+        });
+
+
+        /* restart autoplay after video pauses */
+
+        video.addEventListener("pause", function () {
+
+            mediaSlider.trigger(
+                "play.owl.autoplay",
+                [4000]
+            );
+
+        });
+
+
+        /* restart carousel after video finishes */
+
+        video.addEventListener("ended", function () {
+
+            mediaSlider.trigger(
+                "play.owl.autoplay",
+                [4000]
+            );
+
+
+            mediaSlider.trigger(
+                "next.owl.carousel"
+            );
+
+        });
+
+    });
+
+
+    /* =====================================================
+       WHEN SLIDE CHANGES
+       PAUSE VIDEOS
+    ===================================================== */
+
+    mediaSlider.on(
+        "changed.owl.carousel",
+        function () {
+
+            videos.forEach(function (video) {
+
+                video.pause();
 
             });
 
         }
+    );
 
-    });
+});
 
 </script>
 

@@ -589,6 +589,352 @@ Verify OTP - Flying Fox Adventure
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   SMALLER VERIFY OTP CARD
+========================================================= */
+
+.ff-otp-card {
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1.08fr;
+
+    /* OLD: 650px */
+    min-height: 500px;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border-radius: 28px;
+
+    box-shadow:
+        0 20px 55px
+        rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================================
+   LEFT IMAGE
+========================================================= */
+
+.ff-otp-image-side {
+    position: relative;
+
+    /* OLD: 650px */
+    min-height: 500px;
+
+    overflow: hidden;
+}
+
+.ff-otp-image-side img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+}
+
+
+/* =========================================================
+   RIGHT SIDE
+========================================================= */
+
+.ff-otp-form-side {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    /* OLD: 60px 70px */
+    padding: 30px 55px;
+}
+
+
+.ff-otp-wrapper {
+    width: 100%;
+
+    max-width: 520px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.ff-otp-logo {
+    /* OLD: 25px */
+    margin-bottom: 10px;
+}
+
+.ff-otp-logo img {
+    /* OLD: 105px */
+    width: 70px;
+}
+
+
+/* =========================================================
+   HEADING
+========================================================= */
+
+.ff-otp-heading {
+    /* OLD: 35px */
+    margin-bottom: 18px;
+}
+
+.ff-otp-heading span {
+    margin-bottom: 5px;
+
+    color: #c31103;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+
+.ff-otp-heading h2 {
+    margin-bottom: 6px;
+
+    color: #1e1e1e;
+
+    /* OLD: 37px */
+    font-size: 31px;
+
+    line-height: 1.15;
+
+    font-weight: 800;
+}
+
+
+.ff-otp-heading h2 strong {
+    color: #c31103;
+}
+
+
+.ff-otp-heading p {
+    margin: 0;
+
+    color: #666666;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   PHONE NUMBER
+========================================================= */
+
+.ff-otp-phone {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 7px;
+
+    padding: 6px 13px;
+
+    color: #222222;
+
+    background: #fff4f3;
+
+    border-radius: 50px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   OTP BOXES
+========================================================= */
+
+.ff-otp-boxes {
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, 1fr);
+
+    /* OLD: 12px */
+    gap: 9px;
+
+    /* OLD: 28px */
+    margin-bottom: 18px;
+}
+
+
+.ff-otp-input {
+    width: 100%;
+
+    /* OLD: 70px */
+    height: 54px;
+
+    padding: 0;
+
+    border: 1px solid #dddddd;
+
+    outline: none;
+
+    border-radius: 12px;
+
+    color: #222222;
+
+    background: #ffffff;
+
+    text-align: center;
+
+    /* OLD: 24px */
+    font-size: 21px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.ff-otp-submit {
+    width: 100%;
+
+    /* OLD: 60px */
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    padding: 8px 22px;
+
+    border: none;
+
+    border-radius: 50px;
+
+    color: #ffffff;
+
+    background: #c31103;
+
+    box-shadow:
+        0 10px 25px
+        rgba(195, 17, 3, 0.20);
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   RESEND
+========================================================= */
+
+.ff-otp-resend {
+    /* OLD: 30px */
+    margin-top: 15px;
+}
+
+.ff-otp-resend p {
+    margin-bottom: 4px;
+
+    color: #888888;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   CHANGE NUMBER
+========================================================= */
+
+.ff-change-number {
+    /* OLD: 18px */
+    margin-top: 8px;
+}
+
+@media (max-width: 991px) {
+
+    .ff-otp-card {
+        grid-template-columns: 1fr;
+    }
+
+    .ff-otp-image-side {
+        min-height: 300px;
+    }
+
+    .ff-otp-form-side {
+        padding: 35px 35px;
+    }
+}
+
+
+@media (max-width: 767px) {
+
+    .ff-otp-page {
+        padding: 120px 0 50px;
+    }
+
+    .ff-otp-image-side {
+        min-height: 240px;
+    }
+
+    .ff-otp-form-side {
+        padding: 30px 18px;
+    }
+
+    .ff-otp-logo img {
+        width: 60px;
+    }
+
+    .ff-otp-heading h2 {
+        font-size: 27px;
+    }
+
+    .ff-otp-boxes {
+        gap: 6px;
+    }
+
+    .ff-otp-input {
+        height: 50px;
+        font-size: 19px;
+    }
+
+    .ff-otp-submit {
+        height: 48px;
+    }
+}
+
 </style>
 
 {% endblock %}
@@ -596,17 +942,88 @@ Verify OTP - Flying Fox Adventure
 
 
 {% block content %}
-
 <section class="ff-otp-page">
 
     <div class="container">
 
+
+        <!-- =====================================================
+             AUTH PROGRESS HEADER
+        ====================================================== -->
+
+        <div class="ff-auth-progress">
+            <div class="ff-auth-steps">
+
+
+                <!-- STEP 1 - COMPLETED -->
+
+                <div class="ff-auth-step completed">
+
+                    <div class="ff-auth-step-icon">
+
+                        <i class="fas fa-check"></i>
+
+                    </div>
+
+                    <span>
+                        Mobile Number
+                    </span>
+
+                </div>
+
+
+                <div class="ff-auth-step-line completed"></div>
+
+
+                <!-- STEP 2 - CURRENT -->
+
+                <div class="ff-auth-step active">
+
+                    <div class="ff-auth-step-icon">
+
+                        <i class="fas fa-shield-alt"></i>
+
+                    </div>
+
+                    <span>
+                        Verify OTP
+                    </span>
+
+                </div>
+
+
+                <div class="ff-auth-step-line"></div>
+
+
+                <!-- STEP 3 - NEXT -->
+
+                <div class="ff-auth-step">
+
+                    <div class="ff-auth-step-icon">
+
+                        <i class="fas fa-ticket-alt"></i>
+
+                    </div>
+
+                    <span>
+                        Ready to Book
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             OTP CARD
+        ====================================================== -->
+
         <div class="ff-otp-card">
 
 
-            <!-- =============================================
-                 LEFT IMAGE
-            ============================================== -->
+            <!-- LEFT IMAGE -->
 
             <div class="ff-otp-image-side">
 
@@ -618,10 +1035,7 @@ Verify OTP - Flying Fox Adventure
             </div>
 
 
-
-            <!-- =============================================
-                 RIGHT
-            ============================================== -->
+            <!-- RIGHT FORM -->
 
             <div class="ff-otp-form-side">
 
@@ -638,7 +1052,6 @@ Verify OTP - Flying Fox Adventure
                         >
 
                     </div>
-
 
 
                     <!-- HEADING -->
@@ -673,7 +1086,6 @@ Verify OTP - Flying Fox Adventure
                     </div>
 
 
-
                     <!-- MESSAGES -->
 
                     {% if messages %}
@@ -693,10 +1105,7 @@ Verify OTP - Flying Fox Adventure
                     {% endif %}
 
 
-
-                    <!-- =====================================
-                         OTP FORM
-                    ====================================== -->
+                    <!-- OTP FORM -->
 
                     <form
                         method="POST"
@@ -709,7 +1118,6 @@ Verify OTP - Flying Fox Adventure
 
                         <div class="ff-otp-boxes">
 
-
                             <input
                                 type="text"
                                 name="otp_1"
@@ -720,7 +1128,6 @@ Verify OTP - Flying Fox Adventure
                                 required
                             >
 
-
                             <input
                                 type="text"
                                 name="otp_2"
@@ -729,7 +1136,6 @@ Verify OTP - Flying Fox Adventure
                                 inputmode="numeric"
                                 required
                             >
-
 
                             <input
                                 type="text"
@@ -740,7 +1146,6 @@ Verify OTP - Flying Fox Adventure
                                 required
                             >
 
-
                             <input
                                 type="text"
                                 name="otp_4"
@@ -749,7 +1154,6 @@ Verify OTP - Flying Fox Adventure
                                 inputmode="numeric"
                                 required
                             >
-
 
                             <input
                                 type="text"
@@ -760,7 +1164,6 @@ Verify OTP - Flying Fox Adventure
                                 required
                             >
 
-
                             <input
                                 type="text"
                                 name="otp_6"
@@ -769,7 +1172,6 @@ Verify OTP - Flying Fox Adventure
                                 inputmode="numeric"
                                 required
                             >
-
 
                         </div>
 
@@ -785,9 +1187,7 @@ Verify OTP - Flying Fox Adventure
 
                         </button>
 
-
                     </form>
-
 
 
                     <!-- RESEND -->
@@ -798,9 +1198,7 @@ Verify OTP - Flying Fox Adventure
                             Didn't receive your OTP?
                         </p>
 
-                        <a
-                            href="{% url 'resend_login_otp' %}"
-                        >
+                        <a href="{% url 'resend_login_otp' %}">
 
                             <i class="fas fa-rotate-right"></i>
 
@@ -811,17 +1209,16 @@ Verify OTP - Flying Fox Adventure
                     </div>
 
 
-
                     <!-- CHANGE NUMBER -->
 
                     <div class="ff-change-number">
 
-                        <a
-                            href="{% url 'user_signin' %}"
-                        >
+                        <a href="{% url 'user_signin' %}">
+
                             <i class="fas fa-arrow-left"></i>
 
                             Change mobile number
+
                         </a>
 
                     </div>
@@ -831,7 +1228,6 @@ Verify OTP - Flying Fox Adventure
 
             </div>
 
-
         </div>
 
     </div>
@@ -839,6 +1235,8 @@ Verify OTP - Flying Fox Adventure
 </section>
 
 {% endblock %}
+
+
 
 
 
